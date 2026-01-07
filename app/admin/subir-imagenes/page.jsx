@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '../../../lib/supabase'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -13,11 +13,20 @@ export default function SubirImagenes() {
   const [imagenes, setImagenes] = useState([])
   const [videos, setVideos] = useState([])
   const [uploadProgress, setUploadProgress] = useState('')
+  const [anuncioId, setAnuncioId] = useState(null) // CORRECCIÓN: Estado para anuncioId
   
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const anuncioId = searchParams.get('id')
 
+  // CORRECCIÓN: Obtener anuncioId desde la URL usando window.location
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      const id = params.get('id')
+      setAnuncioId(id)
+    }
+  }, [])
+
+  // Cargar anuncio cuando tenemos el ID
   useEffect(() => {
     if (anuncioId) {
       cargarAnuncio()
@@ -151,12 +160,30 @@ export default function SubirImagenes() {
     router.push('/admin')
   }
 
-  if (!anuncio) {
+  if (!anuncio && anuncioId) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Cargando...</p>
+          <p className="text-gray-600">Cargando anuncio...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!anuncioId) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-lg mb-4">
+            <p className="font-semibold">Error: No se encontró el ID del anuncio</p>
+            <p className="text-sm mt-2">Vuelve al panel y selecciona un anuncio para subir imágenes.</p>
+          </div>
+          <Link href="/admin">
+            <button className="bg-pink-600 text-white px-6 py-2 rounded-lg hover:bg-pink-700">
+              Volver al Panel
+            </button>
+          </Link>
         </div>
       </div>
     )
@@ -203,13 +230,13 @@ export default function SubirImagenes() {
           <div className="mb-8 p-4 bg-green-50 border border-green-200 rounded-lg">
             <h3 className="font-semibold text-green-800 mb-2">✓ Anuncio creado exitosamente</h3>
             <p className="text-sm text-green-700">
-              <strong>Título:</strong> {anuncio.titulo}
+              <strong>Título:</strong> {anuncio?.titulo}
             </p>
             <p className="text-sm text-green-700">
-              <strong>Nombre:</strong> {anuncio.nombre}
+              <strong>Nombre:</strong> {anuncio?.nombre}
             </p>
             <p className="text-sm text-green-700">
-              <strong>Ubicación:</strong> {anuncio.ciudad}, {anuncio.departamento}
+              <strong>Ubicación:</strong> {anuncio?.ciudad}, {anuncio?.departamento}
             </p>
           </div>
 

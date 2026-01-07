@@ -1,8 +1,8 @@
-"use client"
+'use client'
 
 import { useState, useEffect } from 'react'
 import { supabase } from '../../../lib/supabase'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -16,10 +16,11 @@ export default function NuevoAnuncio() {
   const [nuevasImagenes, setNuevasImagenes] = useState([])
   const [nuevosVideos, setNuevosVideos] = useState([])
   
+  // CORRECCIÓN: Usamos estado para anuncioId y modoEditar
+  const [anuncioId, setAnuncioId] = useState(null)
+  const [modoEditar, setModoEditar] = useState(false)
+  
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const anuncioId = searchParams.get('id') // Si hay ID, estamos editando
-  const modoEditar = !!anuncioId
 
   // Datos del formulario
   const [formData, setFormData] = useState({
@@ -68,12 +69,22 @@ export default function NuevoAnuncio() {
   const [ciudadesDisponibles, setCiudadesDisponibles] = useState([])
 
   useEffect(() => {
-    cargarUsuarios()
-    if (modoEditar) {
-      cargarAnuncio()
-      cargarImagenes()
+    // CORRECCIÓN: Obtenemos el ID desde la URL usando window.location
+    // Solo se ejecuta en el cliente, evitando errores de SSR
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      const id = params.get('id')
+      setAnuncioId(id)
+      setModoEditar(!!id)
+      
+      if (id) {
+        cargarAnuncio(id)
+        cargarImagenes(id)
+      }
     }
-  }, [anuncioId])
+    
+    cargarUsuarios()
+  }, [])
 
   const cargarUsuarios = async () => {
     const { data, error } = await supabase
@@ -88,12 +99,12 @@ export default function NuevoAnuncio() {
     setUsuarios(data || [])
   }
 
-  const cargarAnuncio = async () => {
+  const cargarAnuncio = async (id) => {
     setLoadingData(true)
     const { data, error } = await supabase
       .from('anuncios')
       .select('*')
-      .eq('id', anuncioId)
+      .eq('id', id)
       .single()
 
     if (error) {
@@ -123,11 +134,11 @@ export default function NuevoAnuncio() {
     setLoadingData(false)
   }
 
-  const cargarImagenes = async () => {
+  const cargarImagenes = async (id) => {
     const { data, error } = await supabase
       .from('imagenes_anuncios')
       .select('*')
-      .eq('anuncio_id', anuncioId)
+      .eq('anuncio_id', id)
 
     if (!error) {
       setImagenes(data || [])
@@ -256,7 +267,7 @@ export default function NuevoAnuncio() {
     }
 
     try {
-      if (modoEditar) {
+      if (modoEditar && anuncioId) {
         // MODO EDITAR: Actualizar anuncio existente
         const { error: updateError } = await supabase
           .from('anuncios')
@@ -275,7 +286,7 @@ export default function NuevoAnuncio() {
           router.push('/admin')
         }, 1500)
 
-      } else {
+      } else if (!modoEditar) {
         // MODO CREAR: Insertar nuevo anuncio
         const { data: nuevoAnuncio, error: insertError } = await supabase
           .from('anuncios')
