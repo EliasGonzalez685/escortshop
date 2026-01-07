@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -16,18 +15,13 @@ export const metadata = {
   title: 'EscortShoppy',
   description: 'Plataforma de anuncios para adultos en Paraguay',
   icons: {
-    icon: 'public/logo_escorts.jpg', // o .ico/.png
+    icon: '/logo_escorts.jpg',
   },
 }
 
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="es">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
@@ -36,4 +30,3 @@ export default function RootLayout({
     </html>
   );
 }
-
