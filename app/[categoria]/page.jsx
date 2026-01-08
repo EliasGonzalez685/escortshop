@@ -116,60 +116,61 @@ export default function CategoriaPage() {
 
     return (
         <div className="min-h-screen bg-gray-50">
+            {/* Header Responsive */}
             <header className="bg-white shadow-md">
-                <div className="container mx-auto px-4 py-4">
-                    <div className="flex items-center justify-between">
+                <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
+                    <div className="flex items-center justify-between flex-wrap gap-3">
                         <Link href="/">
                             <Image
                                 src="/logo_escorts.jpeg"
                                 alt="EscortShop"
-                                width={200}
-                                height={60}
-                                className="object-contain cursor-pointer"
+                                width={150}
+                                height={45}
+                                className="object-contain cursor-pointer w-32 sm:w-40 md:w-48"
                             />
                         </Link>
 
-                        <div className="flex flex-col items-end gap-2">
+                        <div className="flex items-center gap-2 sm:gap-4">
                             {usuario ? (
                                 <>
-                                    <p className="text-gray-600 text-sm font-medium">
-                                        Bienvenido, {usuario.email}
-                                    </p>
-                                    <div className="flex gap-4">
+                                    <div className="hidden sm:block text-gray-600 text-xs sm:text-sm truncate max-w-[120px] sm:max-w-none">
+                                        👤 {usuario.email}
+                                    </div>
+                                    <div className="flex gap-2 sm:gap-3">
                                         {userRole === 'admin' ? (
                                             <Link href="/admin">
-                                                <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+                                                <button className="px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-xs sm:text-sm font-medium">
                                                     Panel Admin
                                                 </button>
                                             </Link>
                                         ) : (
                                             <Link href="/mis-anuncios">
-                                                <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                                <button className="px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-xs sm:text-sm font-medium">
                                                     Mis Anuncios
                                                 </button>
                                             </Link>
                                         )}
                                         <button
                                             onClick={cerrarSesion}
-                                            className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
+                                            className="px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 text-xs sm:text-sm font-medium"
                                         >
-                                            Cerrar Sesión
+                                            Cerrar
                                         </button>
                                     </div>
                                 </>
                             ) : (
                                 <>
-                                    <p className="text-gray-600 text-sm font-medium">
+                                    <div className="hidden lg:block text-gray-600 text-sm font-medium">
                                         ¿Desea publicar un anuncio?
-                                    </p>
-                                    <div className="flex gap-4">
+                                    </div>
+                                    <div className="flex gap-2 sm:gap-3">
                                         <Link href="/login">
-                                            <button className="px-4 py-2 text-gray-700 hover:text-pink-600">
+                                            <button className="px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 border-2 border-pink-600 text-pink-600 rounded-lg hover:bg-pink-50 text-xs sm:text-sm font-medium">
                                                 Iniciar Sesión
                                             </button>
                                         </Link>
                                         <Link href="/registro">
-                                            <button className="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700">
+                                            <button className="px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 text-xs sm:text-sm font-medium">
                                                 Registrarse
                                             </button>
                                         </Link>
@@ -181,16 +182,17 @@ export default function CategoriaPage() {
                 </div>
             </header>
 
-            <div className={`bg-gradient-to-r from-${config.color}-500 to-${config.color}-600 text-white py-8`}>
-                <div className="container mx-auto px-4">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                            <span className="text-6xl">{config.emoji}</span>
+            {/* Banner Categoría - Responsive */}
+            <div className={`bg-gradient-to-r from-${config.color}-500 to-${config.color}-600 text-white py-4 sm:py-6 md:py-8`}>
+                <div className="container mx-auto px-3 sm:px-4">
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
+                        <div className="flex items-center gap-3 sm:gap-4 text-center sm:text-left">
+                            <span className="text-4xl sm:text-5xl md:text-6xl">{config.emoji}</span>
                             <div>
-                                <h1 className="text-3xl font-bold">
-                                    {config.nombre} en Paraguay - Todos los Departamentos
+                                <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold">
+                                    {config.nombre} en Paraguay
                                 </h1>
-                                <p className="text-lg opacity-90">
+                                <p className="text-xs sm:text-sm md:text-base lg:text-lg opacity-90 mt-1">
                                     {departamentoSeleccionado === 'Todos'
                                         ? 'Encuentra los mejores anuncios en todo Paraguay'
                                         : `Los mejores anuncios en ${departamentoSeleccionado}`
@@ -199,25 +201,26 @@ export default function CategoriaPage() {
                             </div>
                         </div>
                         <Link href="/">
-                            <button className="bg-white text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-100">
-                                ← Volver al inicio
+                            <button className="bg-white text-gray-700 px-3 sm:px-4 py-2 rounded-lg hover:bg-gray-100 text-xs sm:text-sm font-medium whitespace-nowrap">
+                                ← Volver al Inicio
                             </button>
                         </Link>
                     </div>
                 </div>
             </div>
 
+            {/* Filtros - Responsive */}
             <div className="bg-white shadow-sm border-b">
-                <div className="container mx-auto px-4 py-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
+                <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 max-w-2xl">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                                 📍 Selecciona un departamento
                             </label>
                             <select
                                 value={departamentoSeleccionado}
                                 onChange={(e) => setDepartamentoSeleccionado(e.target.value)}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 text-lg"
+                                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 text-sm sm:text-base"
                             >
                                 {departamentos.map((dep) => (
                                     <option key={dep} value={dep}>
@@ -230,14 +233,14 @@ export default function CategoriaPage() {
                         <div className="flex items-end">
                             <button
                                 onClick={cargarAnuncios}
-                                className="w-full px-6 py-3 bg-pink-600 text-white rounded-lg hover:bg-pink-700 font-semibold text-lg"
+                                className="w-full px-4 sm:px-6 py-2 sm:py-3 bg-pink-600 text-white rounded-lg hover:bg-pink-700 font-semibold text-sm sm:text-base"
                             >
                                 🔍 Buscar Anuncios
                             </button>
                         </div>
                     </div>
 
-                    <div className="mt-4 text-sm text-gray-600">
+                    <div className="mt-3 sm:mt-4 text-xs sm:text-sm text-gray-600 bg-blue-50 p-3 rounded-lg">
                         <p>
                             💡 <strong>Tip:</strong> Los anuncios muestran todas las ciudades del departamento seleccionado.
                             No necesitas buscar ciudad por ciudad.
@@ -246,32 +249,34 @@ export default function CategoriaPage() {
                 </div>
             </div>
 
-            <div className="container mx-auto px-4 py-8">
+            {/* Listado de Anuncios - Responsive */}
+            <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
                 {loading ? (
                     <div className="text-center py-12">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600 mx-auto mb-4"></div>
-                        <p className="text-gray-500">Cargando anuncios...</p>
+                        <div className="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-b-2 border-pink-600 mx-auto mb-4"></div>
+                        <p className="text-gray-500 text-sm sm:text-base">Cargando anuncios...</p>
                     </div>
                 ) : anuncios.length === 0 ? (
                     <div className="text-center py-12">
-                        <div className="text-6xl mb-4">😔</div>
-                        <p className="text-gray-500 text-lg">
+                        <div className="text-5xl sm:text-6xl mb-4">😔</div>
+                        <p className="text-gray-500 text-base sm:text-lg">
                             No hay anuncios disponibles en {departamentoSeleccionado === 'Todos' ? 'Paraguay' : departamentoSeleccionado}
                         </p>
-                        <p className="text-gray-400 mt-2">Intenta seleccionar otro departamento</p>
+                        <p className="text-gray-400 text-sm sm:text-base mt-2">Intenta seleccionar otro departamento</p>
                     </div>
                 ) : (
                     <>
-                        <div className="mb-6 flex items-center justify-between">
-                            <p className="text-gray-600 text-lg">
-                                Se encontraron <strong className="text-pink-600 text-2xl">{anuncios.length}</strong> anuncios
+                        <div className="mb-4 sm:mb-6 flex items-center justify-between">
+                            <p className="text-gray-600 text-sm sm:text-base md:text-lg">
+                                Se encontraron <strong className="text-pink-600 text-lg sm:text-xl md:text-2xl">{anuncios.length}</strong> anuncios
                                 {departamentoSeleccionado !== 'Todos' && (
                                     <span className="text-gray-500"> en {departamentoSeleccionado}</span>
                                 )}
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        {/* Grid Responsive: 2 columnas en móvil, 3 en tablet, 4 en desktop */}
+                        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
                             {anuncios.map((anuncio) => {
                                 const imagenes = anuncio.imagenes_anuncios || []
                                 const currentIndex = imageIndexes[anuncio.id] || 0
@@ -279,7 +284,8 @@ export default function CategoriaPage() {
                                 return (
                                     <Link key={anuncio.id} href={`/anuncio/${anuncio.id}`}>
                                         <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer">
-                                            <div className="h-64 bg-gray-200 relative group">
+                                            {/* Imagen - Altura responsive */}
+                                            <div className="h-48 sm:h-56 md:h-64 bg-gray-200 relative group">
                                                 {imagenes.length > 0 ? (
                                                     <>
                                                         {imagenes[currentIndex].tipo === 'video' ? (
@@ -290,8 +296,8 @@ export default function CategoriaPage() {
                                                                     onClick={(e) => e.stopPropagation()}
                                                                 />
                                                                 <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 pointer-events-none">
-                                                                    <div className="bg-white bg-opacity-90 rounded-full p-4">
-                                                                        <span className="text-pink-600 text-4xl">▶</span>
+                                                                    <div className="bg-white bg-opacity-90 rounded-full p-2 sm:p-3 md:p-4">
+                                                                        <span className="text-pink-600 text-2xl sm:text-3xl md:text-4xl">▶</span>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -308,19 +314,19 @@ export default function CategoriaPage() {
                                                             <>
                                                                 <button
                                                                     onClick={(e) => cambiarImagen(anuncio.id, imagenes, 'prev', e)}
-                                                                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white w-8 h-8 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                                                                    className="absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 text-xs sm:text-base"
                                                                 >
                                                                     ←
                                                                 </button>
 
                                                                 <button
                                                                     onClick={(e) => cambiarImagen(anuncio.id, imagenes, 'next', e)}
-                                                                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white w-8 h-8 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                                                                    className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 text-xs sm:text-base"
                                                                 >
                                                                     →
                                                                 </button>
 
-                                                                <div className="absolute bottom-2 right-2 bg-black/70 text-white px-2 py-1 rounded text-xs">
+                                                                <div className="absolute bottom-1 sm:bottom-2 right-1 sm:right-2 bg-black/70 text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs">
                                                                     {currentIndex + 1}/{imagenes.length}
                                                                 </div>
                                                             </>
@@ -329,32 +335,33 @@ export default function CategoriaPage() {
                                                 ) : (
                                                     <div className="w-full h-full flex items-center justify-center text-gray-400">
                                                         <div className="text-center">
-                                                            <div className="text-4xl mb-2">📸</div>
-                                                            <p>Sin imagen</p>
+                                                            <div className="text-3xl sm:text-4xl mb-2">📸</div>
+                                                            <p className="text-xs sm:text-sm">Sin imagen</p>
                                                         </div>
                                                     </div>
                                                 )}
 
-                                                <div className="absolute top-2 right-2 bg-pink-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                                                <div className="absolute top-1 sm:top-2 right-1 sm:right-2 bg-pink-600 text-white px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold">
                                                     {config.emoji} {config.nombre}
                                                 </div>
                                             </div>
 
-                                            <div className="p-4">
-                                                <h3 className="font-bold text-lg mb-2 text-gray-800 line-clamp-1">
+                                            {/* Información - Texto responsive */}
+                                            <div className="p-2 sm:p-3 md:p-4">
+                                                <h3 className="font-bold text-sm sm:text-base md:text-lg mb-1 sm:mb-2 text-gray-800 line-clamp-1">
                                                     {anuncio.titulo}
                                                 </h3>
-                                                <p className="text-sm text-gray-600 mb-2 font-medium">{anuncio.nombre}</p>
+                                                <p className="text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2 font-medium line-clamp-1">{anuncio.nombre}</p>
 
                                                 {anuncio.edad && (
-                                                    <p className="text-sm text-gray-500 mb-2">🎂 {anuncio.edad} años</p>
+                                                    <p className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-2">🎂 {anuncio.edad} años</p>
                                                 )}
 
-                                                <p className="text-sm text-pink-600 font-semibold mb-3">
+                                                <p className="text-xs sm:text-sm text-pink-600 font-semibold mb-2 sm:mb-3 line-clamp-1">
                                                     📍 {anuncio.ciudad}, {anuncio.departamento}
                                                 </p>
 
-                                                <button className="w-full bg-pink-600 text-white py-2 rounded-lg hover:bg-pink-700 font-semibold transition">
+                                                <button className="w-full bg-pink-600 text-white py-1.5 sm:py-2 rounded-lg hover:bg-pink-700 font-semibold transition text-xs sm:text-sm">
                                                     Ver Detalles →
                                                 </button>
                                             </div>

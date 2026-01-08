@@ -62,7 +62,31 @@ export default function AdminPanel() {
     if (error) {
       console.error('Error:', error)
     } else {
-      setAnuncios(data || [])
+      // ✅ VENCIMIENTO AUTOMÁTICO: Verifica y actualiza anuncios vencidos
+      const hoy = new Date()
+      const anunciosProcesados = await Promise.all(
+        data.map(async (anuncio) => {
+          // Si el anuncio está activo y la fecha de vencimiento ya pasó
+          if (anuncio.estado === 'activo' && 
+              anuncio.fecha_vencimiento && 
+              new Date(anuncio.fecha_vencimiento) < hoy) {
+            
+            // Actualizar estado en la base de datos
+            const { error: updateError } = await supabase
+              .from('anuncios')
+              .update({ estado: 'vencido' })
+              .eq('id', anuncio.id)
+
+            if (!updateError) {
+              console.log(`Anuncio ${anuncio.id} marcado como vencido automáticamente`)
+              return { ...anuncio, estado: 'vencido' }
+            }
+          }
+          return anuncio
+        })
+      )
+      
+      setAnuncios(anunciosProcesados || [])
     }
   }
 
@@ -114,8 +138,14 @@ export default function AdminPanel() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">Verificando permisos...</p>
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '1rem'
+      }}>
+        <p style={{ color: '#6b7280' }}>Verificando permisos...</p>
       </div>
     )
   }
@@ -125,23 +155,71 @@ export default function AdminPanel() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-md border-b-4 border-pink-600">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
+    <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb' }}>
+      {/* Header - RESPONSIVE */}
+      <header style={{
+        backgroundColor: 'white',
+        boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+        borderBottom: '4px solid #db2777'
+      }}>
+        <div style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          padding: '1rem'
+        }}>
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            gap: '1rem'
+          }}>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Panel de Administrador</h1>
-              <p className="text-sm text-gray-600">Bienvenido, {user?.email}</p>
+              <h1 style={{
+                fontSize: '1.5rem',
+                fontWeight: 'bold',
+                color: '#1f2937'
+              }}>
+                Panel de Administrador
+              </h1>
+              <p style={{
+                fontSize: '0.875rem',
+                color: '#6b7280',
+                marginTop: '0.25rem'
+              }}>
+                Bienvenido, {user?.email}
+              </p>
             </div>
-            <div className="flex gap-4">
-              <Link href="/">
-                <button className="px-4 py-2 text-gray-700 hover:text-pink-600">
+            <div style={{
+              display: 'flex',
+              gap: '0.75rem',
+              width: '100%'
+            }}>
+              <Link href="/" style={{ flex: 1 }}>
+                <button style={{
+                  width: '100%',
+                  padding: '0.5rem 1rem',
+                  color: '#374151',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '0.5rem',
+                  backgroundColor: 'transparent',
+                  fontSize: '0.875rem',
+                  cursor: 'pointer'
+                }}>
                   Ver Sitio
                 </button>
               </Link>
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
+                style={{
+                  flex: 1,
+                  padding: '0.5rem 1rem',
+                  backgroundColor: '#4b5563',
+                  color: 'white',
+                  borderRadius: '0.5rem',
+                  border: 'none',
+                  fontSize: '0.875rem',
+                  cursor: 'pointer'
+                }}
               >
                 Cerrar Sesión
               </button>
@@ -150,120 +228,369 @@ export default function AdminPanel() {
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold">Gestión de Anuncios</h2>
-            <Link href="/admin/nuevo-anuncio">
-              <button className="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700">
-                + Crear Anuncio
-              </button>
-            </Link>
+      <div style={{
+        maxWidth: '1200px',
+        margin: '0 auto',
+        padding: '1rem',
+        paddingTop: '1.5rem'
+      }}>
+        <div style={{
+          backgroundColor: 'white',
+          borderRadius: '0.5rem',
+          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+          padding: '1rem',
+          marginBottom: '1.5rem'
+        }}>
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            gap: '1rem',
+            marginBottom: '1.5rem'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+              <h2 style={{
+                fontSize: '1.25rem',
+                fontWeight: 'bold',
+                color: '#1f2937'
+              }}>
+                Gestión de Anuncios
+              </h2>
+              <Link href="/admin/nuevo-anuncio">
+                <button style={{
+                  padding: '0.5rem 1rem',
+                  backgroundColor: '#db2777',
+                  color: 'white',
+                  borderRadius: '0.5rem',
+                  border: 'none',
+                  fontSize: '0.875rem',
+                  fontWeight: '500',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem'
+                }}>
+                  <span>+</span>
+                  <span>Crear Anuncio</span>
+                </button>
+              </Link>
+            </div>
+
+            {/* Filtros - RESPONSIVE */}
+            <div style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '0.5rem',
+              width: '100%'
+            }}>
+              {['todos', 'pendiente', 'activo', 'vencido'].map((estado) => {
+                const labels = {
+                  'todos': `Todos (${anuncios.length})`,
+                  'pendiente': 'Pendientes',
+                  'activo': 'Activos',
+                  'vencido': 'Vencidos'
+                }
+                const activeColors = {
+                  'todos': { bg: '#db2777', color: 'white' },
+                  'pendiente': { bg: '#d97706', color: 'white' },
+                  'activo': { bg: '#059669', color: 'white' },
+                  'vencido': { bg: '#dc2626', color: 'white' }
+                }
+                const inactiveColors = {
+                  'todos': { bg: '#e5e7eb', color: '#374151' },
+                  'pendiente': { bg: '#fef3c7', color: '#92400e' },
+                  'activo': { bg: '#d1fae5', color: '#065f46' },
+                  'vencido': { bg: '#fee2e2', color: '#991b1b' }
+                }
+                
+                const isActive = filtroEstado === estado
+                const style = isActive ? activeColors[estado] : inactiveColors[estado]
+                
+                return (
+                  <button
+                    key={estado}
+                    onClick={() => setFiltroEstado(estado)}
+                    style={{
+                      padding: '0.5rem 0.75rem',
+                      borderRadius: '0.5rem',
+                      fontSize: '0.75rem',
+                      fontWeight: '500',
+                      backgroundColor: style.bg,
+                      color: style.color,
+                      border: 'none',
+                      cursor: 'pointer',
+                      flex: '1',
+                      minWidth: '100px'
+                    }}
+                  >
+                    {labels[estado]}
+                  </button>
+                )
+              })}
+            </div>
           </div>
 
-          <div className="flex gap-4 mb-6">
-            <button
-              onClick={() => setFiltroEstado('todos')}
-              className={'px-4 py-2 rounded-lg ' + (filtroEstado === 'todos' ? 'bg-pink-600 text-white' : 'bg-gray-200 text-gray-700')}
-            >
-              Todos ({anuncios.length})
-            </button>
-            <button
-              onClick={() => setFiltroEstado('pendiente')}
-              className={'px-4 py-2 rounded-lg ' + (filtroEstado === 'pendiente' ? 'bg-yellow-600 text-white' : 'bg-gray-200 text-gray-700')}
-            >
-              Pendientes
-            </button>
-            <button
-              onClick={() => setFiltroEstado('activo')}
-              className={'px-4 py-2 rounded-lg ' + (filtroEstado === 'activo' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-700')}
-            >
-              Activos
-            </button>
-            <button
-              onClick={() => setFiltroEstado('vencido')}
-              className={'px-4 py-2 rounded-lg ' + (filtroEstado === 'vencido' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700')}
-            >
-              Vencidos
-            </button>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-100">
+          {/* Tabla RESPONSIVE */}
+          <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+            <table style={{ width: '100%', minWidth: '800px' }}>
+              <thead style={{ backgroundColor: '#f3f4f6' }}>
                 <tr>
-                  <th className="px-4 py-3 text-left text-sm font-semibold">Título</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold">Anunciante</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold">Ubicación</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold">Estado</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold">Vencimiento</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold">Acciones</th>
+                  <th style={{ 
+                    padding: '0.75rem 1rem', 
+                    textAlign: 'left', 
+                    fontSize: '0.75rem', 
+                    fontWeight: '600',
+                    color: '#374151'
+                  }}>
+                    Título
+                  </th>
+                  <th style={{ 
+                    padding: '0.75rem 1rem', 
+                    textAlign: 'left', 
+                    fontSize: '0.75rem', 
+                    fontWeight: '600',
+                    color: '#374151'
+                  }}>
+                    Anunciante
+                  </th>
+                  <th style={{ 
+                    padding: '0.75rem 1rem', 
+                    textAlign: 'left', 
+                    fontSize: '0.75rem', 
+                    fontWeight: '600',
+                    color: '#374151'
+                  }}>
+                    Ubicación
+                  </th>
+                  <th style={{ 
+                    padding: '0.75rem 1rem', 
+                    textAlign: 'left', 
+                    fontSize: '0.75rem', 
+                    fontWeight: '600',
+                    color: '#374151'
+                  }}>
+                    Estado
+                  </th>
+                  <th style={{ 
+                    padding: '0.75rem 1rem', 
+                    textAlign: 'left', 
+                    fontSize: '0.75rem', 
+                    fontWeight: '600',
+                    color: '#374151'
+                  }}>
+                    Vencimiento
+                  </th>
+                  <th style={{ 
+                    padding: '0.75rem 1rem', 
+                    textAlign: 'left', 
+                    fontSize: '0.75rem', 
+                    fontWeight: '600',
+                    color: '#374151'
+                  }}>
+                    Acciones
+                  </th>
                 </tr>
               </thead>
-              <tbody className="divide-y">
+              <tbody style={{ borderTop: '1px solid #e5e7eb' }}>
                 {anuncios.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
+                    <td colSpan={6} style={{ 
+                      padding: '2rem 1rem', 
+                      textAlign: 'center', 
+                      color: '#6b7280',
+                      fontSize: '0.875rem'
+                    }}>
                       No hay anuncios para mostrar
                     </td>
                   </tr>
                 ) : (
-                  anuncios.map((anuncio) => (
-                    <tr key={anuncio.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-3">
-                        <p className="font-medium">{anuncio.titulo}</p>
-                        <p className="text-sm text-gray-500">{anuncio.nombre}</p>
-                      </td>
-                      <td className="px-4 py-3 text-sm">{anuncio.usuarios?.nombre || anuncio.usuarios?.email}</td>
-                      <td className="px-4 py-3 text-sm">{anuncio.ciudad}, {anuncio.departamento}</td>
-                      <td className="px-4 py-3">
-                        <span className={'px-2 py-1 rounded text-xs font-semibold ' + 
-                          (anuncio.estado === 'activo' ? 'bg-green-100 text-green-800' :
-                           anuncio.estado === 'pendiente' ? 'bg-yellow-100 text-yellow-800' :
-                           'bg-red-100 text-red-800')}>
-                          {anuncio.estado}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-sm">
-                        {anuncio.fecha_vencimiento ? new Date(anuncio.fecha_vencimiento).toLocaleDateString() : '-'}
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex gap-2 flex-wrap">
-                          <Link href={`/admin/nuevo-anuncio?id=${anuncio.id}`}>
-                            <button className="px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600">
-                              ✏️ Editar
-                            </button>
-                          </Link>
-                          {anuncio.estado === 'pendiente' && (
-                            <button
-                              onClick={() => cambiarEstado(anuncio.id, 'activo')}
-                              className="px-3 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600"
-                            >
-                              Aprobar
-                            </button>
+                  anuncios.map((anuncio) => {
+                    const estaVencido = anuncio.fecha_vencimiento && 
+                                      new Date(anuncio.fecha_vencimiento) < new Date()
+                    
+                    return (
+                      <tr 
+                        key={anuncio.id} 
+                        style={{ 
+                          borderBottom: '1px solid #e5e7eb',
+                          backgroundColor: estaVencido && anuncio.estado === 'activo' ? '#fef2f2' : 'transparent'
+                        }}
+                      >
+                        <td style={{ padding: '1rem' }}>
+                          <p style={{ 
+                            fontWeight: '500', 
+                            color: '#1f2937',
+                            marginBottom: '0.25rem'
+                          }}>
+                            {anuncio.titulo}
+                          </p>
+                          <p style={{ 
+                            fontSize: '0.75rem', 
+                            color: '#6b7280'
+                          }}>
+                            {anuncio.nombre}
+                          </p>
+                        </td>
+                        <td style={{ 
+                          padding: '1rem', 
+                          fontSize: '0.875rem',
+                          color: '#4b5563'
+                        }}>
+                          {anuncio.usuarios?.nombre || anuncio.usuarios?.email || 'Sin datos'}
+                        </td>
+                        <td style={{ 
+                          padding: '1rem', 
+                          fontSize: '0.875rem',
+                          color: '#4b5563'
+                        }}>
+                          {anuncio.ciudad}, {anuncio.departamento}
+                        </td>
+                        <td style={{ padding: '1rem' }}>
+                          <span style={{
+                            padding: '0.25rem 0.5rem',
+                            borderRadius: '9999px',
+                            fontSize: '0.75rem',
+                            fontWeight: '600',
+                            backgroundColor: anuncio.estado === 'activo' ? '#d1fae5' :
+                                          anuncio.estado === 'pendiente' ? '#fef3c7' :
+                                          '#fee2e2',
+                            color: anuncio.estado === 'activo' ? '#065f46' :
+                                  anuncio.estado === 'pendiente' ? '#92400e' :
+                                  '#991b1b'
+                          }}>
+                            {anuncio.estado}
+                          </span>
+                        </td>
+                        <td style={{ 
+                          padding: '1rem', 
+                          fontSize: '0.875rem',
+                          color: estaVencido ? '#dc2626' : '#4b5563',
+                          fontWeight: estaVencido ? '600' : 'normal'
+                        }}>
+                          {anuncio.fecha_vencimiento ? 
+                            new Date(anuncio.fecha_vencimiento).toLocaleDateString('es-PY') : 
+                            '-'
+                          }
+                          {estaVencido && anuncio.estado === 'activo' && (
+                            <span style={{
+                              display: 'block',
+                              fontSize: '0.75rem',
+                              color: '#ef4444',
+                              marginTop: '0.25rem'
+                            }}>
+                              ⚠️ Vencido
+                            </span>
                           )}
-                          {anuncio.estado === 'activo' && (
+                        </td>
+                        <td style={{ padding: '1rem' }}>
+                          <div style={{
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            gap: '0.5rem'
+                          }}>
+                            <Link href={`/admin/nuevo-anuncio?id=${anuncio.id}`}>
+                              <button style={{
+                                padding: '0.25rem 0.75rem',
+                                backgroundColor: '#3b82f6',
+                                color: 'white',
+                                borderRadius: '0.25rem',
+                                border: 'none',
+                                fontSize: '0.75rem',
+                                fontWeight: '500',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.25rem'
+                              }}>
+                                <span>✏️</span>
+                                <span>Editar</span>
+                              </button>
+                            </Link>
+                            
+                            {anuncio.estado === 'pendiente' && (
+                              <button
+                                onClick={() => cambiarEstado(anuncio.id, 'activo')}
+                                style={{
+                                  padding: '0.25rem 0.75rem',
+                                  backgroundColor: '#10b981',
+                                  color: 'white',
+                                  borderRadius: '0.25rem',
+                                  border: 'none',
+                                  fontSize: '0.75rem',
+                                  fontWeight: '500',
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                Aprobar
+                              </button>
+                            )}
+                            
+                            {anuncio.estado === 'activo' && (
+                              <button
+                                onClick={() => cambiarEstado(anuncio.id, 'vencido')}
+                                style={{
+                                  padding: '0.25rem 0.75rem',
+                                  backgroundColor: '#f59e0b',
+                                  color: 'white',
+                                  borderRadius: '0.25rem',
+                                  border: 'none',
+                                  fontSize: '0.75rem',
+                                  fontWeight: '500',
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                Vencer
+                              </button>
+                            )}
+                            
                             <button
-                              onClick={() => cambiarEstado(anuncio.id, 'vencido')}
-                              className="px-3 py-1 bg-yellow-500 text-white text-xs rounded hover:bg-yellow-600"
+                              onClick={() => eliminarAnuncio(anuncio.id)}
+                              style={{
+                                padding: '0.25rem 0.75rem',
+                                backgroundColor: '#ef4444',
+                                color: 'white',
+                                borderRadius: '0.25rem',
+                                border: 'none',
+                                fontSize: '0.75rem',
+                                fontWeight: '500',
+                                cursor: 'pointer'
+                              }}
                             >
-                              Vencer
+                              Eliminar
                             </button>
-                          )}
-                          <button
-                            onClick={() => eliminarAnuncio(anuncio.id)}
-                            className="px-3 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600"
-                          >
-                            Eliminar
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  })
                 )}
               </tbody>
             </table>
           </div>
+        </div>
+
+        {/* Info sobre vencimiento automático */}
+        <div style={{
+          backgroundColor: '#f0f9ff',
+          border: '1px solid #bae6fd',
+          borderRadius: '0.5rem',
+          padding: '1rem',
+          marginTop: '1rem'
+        }}>
+          <p style={{ 
+            fontSize: '0.875rem', 
+            color: '#0369a1',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem'
+          }}>
+            <span>ℹ️</span>
+            <span>
+              <strong>Sistema de vencimiento automático:</strong> Los anuncios activos 
+              cuya fecha de vencimiento ya pasó se marcan automáticamente como "vencidos". 
+              Esto sucede cada vez que cargas esta página.
+            </span>
+          </p>
         </div>
       </div>
     </div>
