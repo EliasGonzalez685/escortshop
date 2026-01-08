@@ -3,23 +3,22 @@ export default async function sitemap() {
   const baseUrl = 'https://escortshoppy.com';
   const currentDate = new Date().toISOString();
   
-  // Departamentos SIN ACENTOS en las URLs (usa slugs sin acentos)
   const departamentos = [
     'alto-paraguay',
-    'alto-parana',           // Cambiado: alto-paraná -> alto-parana
+    'alto-parana',
     'amambay', 
-    'boqueron',              // Cambiado: boquerón -> boqueron
-    'caaguazu',              // Cambiado: caaguazú -> caaguazu
-    'caazapa',               // Cambiado: caazapá -> caazapa
-    'canindeyu',             // Cambiado: canindeyú -> canindeyu
+    'boqueron',
+    'caaguazu',
+    'caazapa',
+    'canindeyu',
     'central',
-    'concepcion',            // Cambiado: concepción -> concepcion
+    'concepcion',
     'cordillera',
-    'guaira',                // Cambiado: guairá -> guaira
-    'itapua',                // Cambiado: itapúa -> itapua
+    'guaira',
+    'itapua',
     'misiones',
-    'neembucu',              // Cambiado: ñeembucú -> neembucu
-    'paraguari',             // Cambiado: paraguarí -> paraguari
+    'neembucu',
+    'paraguari',
     'presidente-hayes',
     'san-pedro'
   ];
@@ -36,36 +35,31 @@ export default async function sitemap() {
     'admin'
   ];
 
-  // Función para ESCAPAR URLs correctamente
-  const escapeUrl = (url) => {
-    return url
-      .replace(/á/g, 'a')
-      .replace(/é/g, 'e')
-      .replace(/í/g, 'i')
-      .replace(/ó/g, 'o')
-      .replace(/ú/g, 'u')
-      .replace(/ñ/g, 'n')
-      .replace(/Á/g, 'A')
-      .replace(/É/g, 'E')
-      .replace(/Í/g, 'I')
-      .replace(/Ó/g, 'O')
-      .replace(/Ú/g, 'U')
-      .replace(/Ñ/g, 'N');
+  // Función para ESCAPAR XML correctamente
+  const escapeXml = (text) => {
+    if (!text) return '';
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&apos;');
   };
 
-  const urls = [
-    {
-      url: baseUrl,
-      lastModified: currentDate,
-      changeFrequency: 'daily',
-      priority: 1.0,
-    }
-  ];
+  const urls = [];
+
+  // Página principal
+  urls.push({
+    url: escapeXml(baseUrl),
+    lastModified: currentDate,
+    changeFrequency: 'daily',
+    priority: 1.0,
+  });
 
   // Categorías principales
   categorias.forEach(categoria => {
     urls.push({
-      url: `${baseUrl}/${categoria}`,
+      url: escapeXml(`${baseUrl}/${categoria}`),
       lastModified: currentDate,
       changeFrequency: 'daily',
       priority: 0.9,
@@ -75,7 +69,7 @@ export default async function sitemap() {
   // Páginas estáticas
   paginasEstaticas.forEach(pagina => {
     urls.push({
-      url: `${baseUrl}/${pagina}`,
+      url: escapeXml(`${baseUrl}/${pagina}`),
       lastModified: currentDate,
       changeFrequency: 'monthly',
       priority: 0.5,
@@ -84,66 +78,21 @@ export default async function sitemap() {
 
   // Página de departamentos
   urls.push({
-    url: `${baseUrl}/departamentos`,
+    url: escapeXml(`${baseUrl}/departamentos`),
     lastModified: currentDate,
     changeFrequency: 'weekly',
     priority: 0.8,
   });
 
-  // URLs por departamento y categoría (ESCAPADAS)
+  // URLs por departamento
   categorias.forEach(categoria => {
     departamentos.forEach(departamento => {
-      const urlEscapada = escapeUrl(`${baseUrl}/${categoria}?departamento=${departamento}`);
       urls.push({
-        url: urlEscapada,
+        url: escapeXml(`${baseUrl}/${categoria}?departamento=${departamento}`),
         lastModified: currentDate,
         changeFrequency: 'daily',
         priority: 0.7,
       });
-    });
-  });
-
-  // URLs para ciudades importantes
-  const ciudadesImportantes = [
-    { slug: 'ciudad-del-este', departamento: 'alto-parana' },
-    { slug: 'encarnacion', departamento: 'itapua' },
-    { slug: 'coronel-oviedo', departamento: 'caaguazu' },
-    { slug: 'pedro-juan-caballero', departamento: 'amambay' },
-    { slug: 'salto-del-guaira', departamento: 'canindeyu' },
-    { slug: 'villlarrica', departamento: 'guaira' },
-    { slug: 'caacupe', departamento: 'cordillera' },
-    { slug: 'pilar', departamento: 'neembucu' },
-    { slug: 'concepcion', departamento: 'concepcion' },
-    { slug: 'villa-hayes', departamento: 'presidente-hayes' },
-    { slug: 'paraguari', departamento: 'paraguari' },
-    { slug: 'san-juan-bautista', departamento: 'misiones' },
-    { slug: 'filadelfia', departamento: 'boqueron' },
-    { slug: 'fuerte-olimpo', departamento: 'alto-paraguay' },
-    { slug: 'san-pedro', departamento: 'san-pedro' },
-    { slug: 'caazapa', departamento: 'caazapa' }
-  ];
-
-  categorias.forEach(categoria => {
-    ciudadesImportantes.forEach(ciudad => {
-      const urlEscapada = escapeUrl(
-        `${baseUrl}/${categoria}?departamento=${ciudad.departamento}&ciudad=${ciudad.slug}`
-      );
-      urls.push({
-        url: urlEscapada,
-        lastModified: currentDate,
-        changeFrequency: 'daily',
-        priority: 0.6,
-      });
-    });
-  });
-
-  // URLs para "TODO PARAGUAY"
-  categorias.forEach(categoria => {
-    urls.push({
-      url: `${baseUrl}/${categoria}?departamento=todo-paraguay`,
-      lastModified: currentDate,
-      changeFrequency: 'daily',
-      priority: 0.7,
     });
   });
 
