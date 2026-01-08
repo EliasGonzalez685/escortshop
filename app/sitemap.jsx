@@ -1,49 +1,58 @@
 // app/sitemap.js
 export default async function sitemap() {
   const baseUrl = 'https://escortshoppy.com';
-  const currentDate = new Date();
+  const currentDate = new Date().toISOString();
   
-  // Lista COMPLETA de departamentos de Paraguay (17 departamentos)
+  // Departamentos SIN ACENTOS en las URLs (usa slugs sin acentos)
   const departamentos = [
-    { slug: 'alto-paraguay', nombre: 'Alto Paraguay' },
-    { slug: 'alto-paraná', nombre: 'Alto Paraná' },
-    { slug: 'amambay', nombre: 'Amambay' },
-    { slug: 'boquerón', nombre: 'Boquerón' },
-    { slug: 'caaguazú', nombre: 'Caaguazú' },
-    { slug: 'caazapá', nombre: 'Caazapá' },
-    { slug: 'canindeyú', nombre: 'Canindeyú' },
-    { slug: 'central', nombre: 'Central' },
-    { slug: 'concepción', nombre: 'Concepción' },
-    { slug: 'cordillera', nombre: 'Cordillera' },
-    { slug: 'guairá', nombre: 'Guairá' },
-    { slug: 'itapúa', nombre: 'Itapúa' },
-    { slug: 'misiones', nombre: 'Misiones' },
-    { slug: 'ñeembucú', nombre: 'Ñeembucú' },
-    { slug: 'paraguarí', nombre: 'Paraguarí' },
-    { slug: 'presidente-hayes', nombre: 'Presidente Hayes' },
-    { slug: 'san-pedro', nombre: 'San Pedro' }
+    'alto-paraguay',
+    'alto-parana',           // Cambiado: alto-paraná -> alto-parana
+    'amambay', 
+    'boqueron',              // Cambiado: boquerón -> boqueron
+    'caaguazu',              // Cambiado: caaguazú -> caaguazu
+    'caazapa',               // Cambiado: caazapá -> caazapa
+    'canindeyu',             // Cambiado: canindeyú -> canindeyu
+    'central',
+    'concepcion',            // Cambiado: concepción -> concepcion
+    'cordillera',
+    'guaira',                // Cambiado: guairá -> guaira
+    'itapua',                // Cambiado: itapúa -> itapua
+    'misiones',
+    'neembucu',              // Cambiado: ñeembucú -> neembucu
+    'paraguari',             // Cambiado: paraguarí -> paraguari
+    'presidente-hayes',
+    'san-pedro'
   ];
   
-  // Categorías principales de tu sitio
-  const categorias = [
-    { slug: 'escorts', nombre: 'Escorts' },
-    { slug: 'trans', nombre: 'Trans' },
-    { slug: 'gay', nombre: 'Gay' },
-    { slug: 'parejas', nombre: 'Parejas' }
-  ];
+  const categorias = ['escorts', 'trans', 'gay', 'parejas'];
   
-  // Páginas estáticas importantes
   const paginasEstaticas = [
-    { slug: 'login', nombre: 'Iniciar Sesión' },
-    { slug: 'registro', nombre: 'Registrarse' },
-    { slug: 'mis-anuncios', nombre: 'Mis Anuncios' },
-    { slug: 'nuevo-anuncio', nombre: 'Nuevo Anuncio' },
-    { slug: 'terminos', nombre: 'Términos y Condiciones' },
-    { slug: 'contacto', nombre: 'Contacto' },
-    { slug: 'admin', nombre: 'Panel de Administración' }
+    'login',
+    'registro',
+    'mis-anuncios',
+    'nuevo-anuncio',
+    'terminos',
+    'contacto',
+    'admin'
   ];
 
-  // 1. PÁGINA PRINCIPAL
+  // Función para ESCAPAR URLs correctamente
+  const escapeUrl = (url) => {
+    return url
+      .replace(/á/g, 'a')
+      .replace(/é/g, 'e')
+      .replace(/í/g, 'i')
+      .replace(/ó/g, 'o')
+      .replace(/ú/g, 'u')
+      .replace(/ñ/g, 'n')
+      .replace(/Á/g, 'A')
+      .replace(/É/g, 'E')
+      .replace(/Í/g, 'I')
+      .replace(/Ó/g, 'O')
+      .replace(/Ú/g, 'U')
+      .replace(/Ñ/g, 'N');
+  };
+
   const urls = [
     {
       url: baseUrl,
@@ -53,27 +62,27 @@ export default async function sitemap() {
     }
   ];
 
-  // 2. CATEGORÍAS PRINCIPALES
+  // Categorías principales
   categorias.forEach(categoria => {
     urls.push({
-      url: `${baseUrl}/${categoria.slug}`,
+      url: `${baseUrl}/${categoria}`,
       lastModified: currentDate,
       changeFrequency: 'daily',
       priority: 0.9,
     });
   });
 
-  // 3. PÁGINAS ESTÁTICAS
+  // Páginas estáticas
   paginasEstaticas.forEach(pagina => {
     urls.push({
-      url: `${baseUrl}/${pagina.slug}`,
+      url: `${baseUrl}/${pagina}`,
       lastModified: currentDate,
       changeFrequency: 'monthly',
       priority: 0.5,
     });
   });
 
-  // 4. PÁGINA DE DEPARTAMENTOS (si la creas)
+  // Página de departamentos
   urls.push({
     url: `${baseUrl}/departamentos`,
     lastModified: currentDate,
@@ -81,11 +90,12 @@ export default async function sitemap() {
     priority: 0.8,
   });
 
-  // 5. URLs POR DEPARTAMENTO Y CATEGORÍA (LAS MÁS IMPORTANTES PARA SEO)
+  // URLs por departamento y categoría (ESCAPADAS)
   categorias.forEach(categoria => {
     departamentos.forEach(departamento => {
+      const urlEscapada = escapeUrl(`${baseUrl}/${categoria}?departamento=${departamento}`);
       urls.push({
-        url: `${baseUrl}/${categoria.slug}?departamento=${departamento.slug}`,
+        url: urlEscapada,
         lastModified: currentDate,
         changeFrequency: 'daily',
         priority: 0.7,
@@ -93,30 +103,33 @@ export default async function sitemap() {
     });
   });
 
-  // 6. URLs ESPECIALES PARA CIUDADES IMPORTANTES
+  // URLs para ciudades importantes
   const ciudadesImportantes = [
-    { slug: 'ciudad-del-este', nombre: 'Ciudad del Este', departamento: 'alto-paraná' },
-    { slug: 'encarnación', nombre: 'Encarnación', departamento: 'itapúa' },
-    { slug: 'coronel-oviedo', nombre: 'Coronel Oviedo', departamento: 'caaguazú' },
-    { slug: 'pedro-juan-caballero', nombre: 'Pedro Juan Caballero', departamento: 'amambay' },
-    { slug: 'salto-del-guairá', nombre: 'Salto del Guairá', departamento: 'canindeyú' },
-    { slug: 'villlarrica', nombre: 'Villarrica', departamento: 'guairá' },
-    { slug: 'caacupé', nombre: 'Caacupé', departamento: 'cordillera' },
-    { slug: 'pilar', nombre: 'Pilar', departamento: 'ñeembucú' },
-    { slug: 'concepción', nombre: 'Concepción', departamento: 'concepción' },
-    { slug: 'villa-hayes', nombre: 'Villa Hayes', departamento: 'presidente-hayes' },
-    { slug: 'paraguarí', nombre: 'Paraguarí', departamento: 'paraguarí' },
-    { slug: 'san-juan-bautista', nombre: 'San Juan Bautista', departamento: 'misiones' },
-    { slug: 'filadelfia', nombre: 'Filadelfia', departamento: 'boquerón' },
-    { slug: 'fuerte-olimpo', nombre: 'Fuerte Olimpo', departamento: 'alto-paraguay' },
-    { slug: 'san-pedro', nombre: 'San Pedro del Ycuamandiyú', departamento: 'san-pedro' },
-    { slug: 'caazapá', nombre: 'Caazapá', departamento: 'caazapá' }
+    { slug: 'ciudad-del-este', departamento: 'alto-parana' },
+    { slug: 'encarnacion', departamento: 'itapua' },
+    { slug: 'coronel-oviedo', departamento: 'caaguazu' },
+    { slug: 'pedro-juan-caballero', departamento: 'amambay' },
+    { slug: 'salto-del-guaira', departamento: 'canindeyu' },
+    { slug: 'villlarrica', departamento: 'guaira' },
+    { slug: 'caacupe', departamento: 'cordillera' },
+    { slug: 'pilar', departamento: 'neembucu' },
+    { slug: 'concepcion', departamento: 'concepcion' },
+    { slug: 'villa-hayes', departamento: 'presidente-hayes' },
+    { slug: 'paraguari', departamento: 'paraguari' },
+    { slug: 'san-juan-bautista', departamento: 'misiones' },
+    { slug: 'filadelfia', departamento: 'boqueron' },
+    { slug: 'fuerte-olimpo', departamento: 'alto-paraguay' },
+    { slug: 'san-pedro', departamento: 'san-pedro' },
+    { slug: 'caazapa', departamento: 'caazapa' }
   ];
 
   categorias.forEach(categoria => {
     ciudadesImportantes.forEach(ciudad => {
+      const urlEscapada = escapeUrl(
+        `${baseUrl}/${categoria}?departamento=${ciudad.departamento}&ciudad=${ciudad.slug}`
+      );
       urls.push({
-        url: `${baseUrl}/${categoria.slug}?departamento=${ciudad.departamento}&ciudad=${ciudad.slug}`,
+        url: urlEscapada,
         lastModified: currentDate,
         changeFrequency: 'daily',
         priority: 0.6,
@@ -124,20 +137,10 @@ export default async function sitemap() {
     });
   });
 
-  // 7. URLs PARA CAPITAL (ASUNCIÓN) - ESPECIAL
+  // URLs para "TODO PARAGUAY"
   categorias.forEach(categoria => {
     urls.push({
-      url: `${baseUrl}/${categoria.slug}?departamento=central&ciudad=asunción`,
-      lastModified: currentDate,
-      changeFrequency: 'daily',
-      priority: 0.8,
-    });
-  });
-
-  // 8. URLs PARA "TODO PARAGUAY" (sin filtros)
-  categorias.forEach(categoria => {
-    urls.push({
-      url: `${baseUrl}/${categoria.slug}?departamento=todo-paraguay`,
+      url: `${baseUrl}/${categoria}?departamento=todo-paraguay`,
       lastModified: currentDate,
       changeFrequency: 'daily',
       priority: 0.7,
@@ -145,23 +148,4 @@ export default async function sitemap() {
   });
 
   return urls;
-}
-
-// También puedes exportar una función para generar robots.txt si quieres
-export async function generateRobotsTxt() {
-  return {
-    rules: [
-      {
-        userAgent: '*',
-        allow: '/',
-        disallow: ['/admin/', '/api/'],
-      },
-      {
-        userAgent: 'Googlebot',
-        allow: '/',
-      },
-    ],
-    sitemap: 'https://escortshoppy.com/sitemap.xml',
-    host: 'https://escortshoppy.com',
-  };
 }
