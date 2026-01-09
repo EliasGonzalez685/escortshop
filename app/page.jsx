@@ -12,18 +12,42 @@ export default function Home() {
   const [usuario, setUsuario] = useState(null)
   const [userRole, setUserRole] = useState(null)
 
-  // SOLUCIÓN CRÍTICA: Evitar que Google vea solo el popup
   useEffect(() => {
     verificarUsuario()
     
-    // Si es Googlebot, mostrar contenido directamente (NO popup)
+    // Si es Googlebot, mostrar contenido directamente
     const userAgent = typeof window !== 'undefined' ? navigator.userAgent : ''
     const isGooglebot = /Googlebot|bingbot|Slurp/i.test(userAgent)
     
     if (isGooglebot) {
       setShowAgeVerification(false)
     }
+    
+    // Verificar si ya aceptó previamente
+    const isVerified = typeof window !== 'undefined' ? localStorage.getItem('age-verified') : null
+    if (isVerified === 'true') {
+      setShowAgeVerification(false)
+    }
   }, [])
+
+  // FIX CRÍTICO: Bloquear scroll del body cuando modal está activo
+  useEffect(() => {
+    if (showAgeVerification) {
+      document.body.style.overflow = 'hidden'
+      document.body.style.height = '100vh'
+      document.documentElement.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'auto'
+      document.body.style.height = 'auto'
+      document.documentElement.style.overflow = 'auto'
+    }
+    
+    return () => {
+      document.body.style.overflow = 'auto'
+      document.body.style.height = 'auto'
+      document.documentElement.style.overflow = 'auto'
+    }
+  }, [showAgeVerification])
 
   const verificarUsuario = async () => {
     const { data: { user } } = await supabase.auth.getUser()
@@ -52,25 +76,19 @@ export default function Home() {
 
   const handleAgeAccept = () => {
     setShowAgeVerification(false)
-    localStorage.setItem('age-verified', 'true')
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('age-verified', 'true')
+    }
   }
 
   const handleAgeReject = () => {
     window.location.href = 'https://www.google.com'
   }
 
-  // SIEMPRE mostrar contenido a Google (SOLUCIÓN DEL PROBLEMA PRINCIPAL)
-  useEffect(() => {
-    const isVerified = localStorage.getItem('age-verified')
-    if (isVerified === 'true') {
-      setShowAgeVerification(false)
-    }
-  }, [])
-
   if (showAgeVerification) {
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg max-w-md w-full p-6 sm:p-8 text-center">
+      <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[9999] p-4 overflow-y-auto">
+        <div className="bg-white rounded-lg max-w-md w-full p-6 sm:p-8 text-center my-4">
           <div className="mb-4 sm:mb-6">
             <Image 
               src="/logo_escorts.jpeg" 
@@ -125,7 +143,7 @@ export default function Home() {
     )
   }
 
-  // TODOS los 17 departamentos de Paraguay con sus ciudades principales
+  // TODOS los 17 departamentos de Paraguay
   const todosDepartamentos = [
     {
       nombre: 'Central',
@@ -214,79 +232,67 @@ export default function Home() {
     }
   ];
 
-  // Ciudades principales para el hero section
-  const ciudadesHero = [
-    { nombre: 'Asunción', departamento: 'Central', emoji: '🏙️' },
-    { nombre: 'Ciudad del Este', departamento: 'Alto Paraná', emoji: '🛒' },
-    { nombre: 'Encarnación', departamento: 'Itapúa', emoji: '🏖️' },
-    { nombre: 'Caacupé', departamento: 'Cordillera', emoji: '⛪' },
-    { nombre: 'Salto del Guairá', departamento: 'Canindeyú', emoji: '🌊' },
-    { nombre: 'Coronel Oviedo', departamento: 'Caaguazú', emoji: '🌳' }
-  ];
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header - 100% RESPONSIVE */}
-      <header className="bg-white shadow-md">
+      <header className="bg-white shadow-md sticky top-0 z-50">
         <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
-            {/* Logo - Centrado en móvil */}
-            <div className="w-full sm:w-auto flex justify-center sm:justify-start mb-3 sm:mb-0">
+            <div className="w-full sm:w-auto flex justify-center sm:justify-start mb-2 sm:mb-0">
               <Link href="/">
                 <Image 
                   src="/logo_escorts.jpeg" 
                   alt="EscortShop Paraguay" 
                   width={180}
                   height={54}
-                  className="object-contain cursor-pointer w-40 sm:w-48 md:w-56"
+                  className="object-contain cursor-pointer w-40 sm:w-48"
                   priority
                 />
               </Link>
             </div>
             
-            {/* Botones de usuario - Responsive */}
             <div className="w-full sm:w-auto">
-              <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
+              <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
                 {usuario ? (
                   <>
-                    <div className="hidden sm:block text-gray-600 text-xs sm:text-sm truncate max-w-[120px] md:max-w-[200px]">
+                    <div className="hidden sm:block text-gray-600 text-xs sm:text-sm truncate max-w-[120px] md:max-w-[180px]">
                       👤 {usuario.email}
                     </div>
-                    <div className="flex flex-wrap justify-center gap-2 sm:gap-3 w-full sm:w-auto">
+                    <div className="flex flex-wrap justify-center gap-2 w-full sm:w-auto">
                       {userRole === 'admin' ? (
-                        <Link href="/admin" className="w-full sm:w-auto">
-                          <button className="w-full sm:w-auto px-3 sm:px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-xs sm:text-sm font-medium transition-all">
+                        <Link href="/admin" className="flex-1 sm:flex-none">
+                          <button className="w-full px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-xs sm:text-sm font-medium">
                             Panel Admin
                           </button>
                         </Link>
                       ) : (
-                        <Link href="/mis-anuncios" className="w-full sm:w-auto">
-                          <button className="w-full sm:w-auto px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-xs sm:text-sm font-medium transition-all">
+                        <Link href="/mis-anuncios" className="flex-1 sm:flex-none">
+                          <button className="w-full px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-xs sm:text-sm font-medium">
                             Mis Anuncios
                           </button>
                         </Link>
                       )}
                       <button 
                         onClick={cerrarSesion}
-                        className="w-full sm:w-auto px-3 sm:px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 text-xs sm:text-sm font-medium transition-all"
+                        className="flex-1 sm:flex-none px-3 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 text-xs sm:text-sm font-medium"
                       >
-                        Cerrar Sesión
+                        Cerrar
                       </button>
                     </div>
                   </>
                 ) : (
                   <>
-                    <div className="hidden lg:block text-gray-600 text-sm font-medium text-center sm:text-left mb-2 sm:mb-0">
+                    <div className="hidden lg:block text-gray-600 text-sm font-medium">
                       ¿Deseas publicar un anuncio?
                     </div>
-                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
-                      <Link href="/login" className="w-full sm:w-auto">
-                        <button className="w-full sm:w-auto px-3 sm:px-4 py-2 border-2 border-pink-600 text-pink-600 rounded-lg hover:bg-pink-50 text-xs sm:text-sm font-medium transition-all">
+                    <div className="flex gap-2 w-full sm:w-auto">
+                      <Link href="/login" className="flex-1 sm:flex-none">
+                        <button className="w-full px-3 py-2 border-2 border-pink-600 text-pink-600 rounded-lg hover:bg-pink-50 text-xs sm:text-sm font-medium">
                           Iniciar Sesión
                         </button>
                       </Link>
-                      <Link href="/registro" className="w-full sm:w-auto">
-                        <button className="w-full sm:w-auto px-3 sm:px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 text-xs sm:text-sm font-medium transition-all">
+                      <Link href="/registro" className="flex-1 sm:flex-none">
+                        <button className="w-full px-3 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 text-xs sm:text-sm font-medium">
                           Registrarse
                         </button>
                       </Link>
@@ -299,32 +305,31 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Hero Section - 100% RESPONSIVE */}
+      {/* Hero Section - CON LOS 17 DEPARTAMENTOS */}
       <section className="bg-gradient-to-r from-pink-600 to-purple-600 text-white py-8 sm:py-10 md:py-12">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
             Escorts Paraguay - Putas y Acompañantes VIP
           </h1>
           
-          <p className="text-base sm:text-lg md:text-xl mb-3 sm:mb-4">
+          <p className="text-base sm:text-lg md:text-xl mb-4">
             Encuentra escorts, putas, trans y gay en los 17 departamentos
           </p>
           
-          <div className="mt-4 sm:mt-5">
-            <p className="text-sm sm:text-base md:text-lg opacity-90 mb-3">
-              Busca por ciudad:
+          {/* LOS 17 DEPARTAMENTOS EN EL HERO */}
+          <div className="mt-5 sm:mt-6">
+            <p className="text-sm sm:text-base md:text-lg opacity-90 mb-3 font-semibold">
+              📍 Busca por departamento:
             </p>
-            <div className="flex flex-wrap justify-center gap-2">
-              {ciudadesHero.map((ciudad) => (
-                <span key={ciudad.nombre} className="bg-white/20 px-3 py-1.5 rounded-full text-xs sm:text-sm hover:bg-white/30 transition-colors">
-                  <a 
-                    href={`/escorts?departamento=${encodeURIComponent(ciudad.departamento)}&ciudad=${encodeURIComponent(ciudad.nombre)}`}
-                    className="hover:underline flex items-center gap-1"
-                  >
-                    <span className="hidden xs:inline">{ciudad.emoji}</span>
-                    <span>{ciudad.nombre}</span>
-                  </a>
-                </span>
+            <div className="flex flex-wrap justify-center gap-2 max-w-5xl mx-auto">
+              {todosDepartamentos.map((depto) => (
+                <a
+                  key={depto.nombre}
+                  href={`/escorts?departamento=${encodeURIComponent(depto.nombre)}`}
+                  className="bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-full text-xs sm:text-sm transition-colors inline-block"
+                >
+                  {depto.nombre}
+                </a>
               ))}
             </div>
           </div>
@@ -380,7 +385,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Sección TODOS los Departamentos - 100% RESPONSIVE */}
+      {/* Sección TODOS los Departamentos con ciudades */}
       <section className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
         <h2 className="text-xl sm:text-2xl font-bold text-center mb-5 sm:mb-6 text-gray-800">
           Encuentra Escorts en los 17 Departamentos
@@ -391,7 +396,6 @@ export default function Home() {
             Busca anuncios de escorts en todas las ciudades de Paraguay
           </p>
           
-          {/* Grid responsive: 1 col móvil, 2 tablet, 3 desktop */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
             {todosDepartamentos.map((depto) => (
               <div key={depto.nombre} className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-4 sm:p-5 border border-gray-200">
@@ -443,12 +447,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* BANNER 1: Anuncia con nosotros - RESPONSIVE */}
+      {/* BANNER 1: Anuncia con nosotros */}
       <section className="container mx-auto px-3 sm:px-4 py-4 sm:py-5">
         <div className="max-w-4xl mx-auto">
           <div className="bg-green-600 rounded-lg shadow-lg p-4 sm:p-5 text-white">
             <div className="flex flex-col items-center justify-center gap-3 text-center">
-              <span className="text-3xl">📢</span>
+              <span className="text-3xl sm:text-4xl">📢</span>
               <div>
                 <h3 className="text-lg sm:text-xl font-bold mb-1">ANUNCIA CON NOSOTROS</h3>
                 <p className="text-sm sm:text-base mb-2">Pagos por Transferencia o Giros</p>
@@ -467,12 +471,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* BANNER 2: Promo por apertura - RESPONSIVE */}
+      {/* BANNER 2: Promo por apertura */}
       <section className="container mx-auto px-3 sm:px-4 py-4 sm:py-5">
         <div className="max-w-4xl mx-auto">
           <div className="bg-orange-500 rounded-lg shadow-lg p-4 sm:p-5 text-white">
             <div className="text-center">
-              <span className="text-3xl mb-2 inline-block">🎁</span>
+              <span className="text-3xl sm:text-4xl mb-2 inline-block">🎁</span>
               <h3 className="text-lg sm:text-xl font-bold mb-2">PROMO POR APERTURA</h3>
               <p className="text-sm sm:text-base font-semibold">
                 Recomendando a alguien tenés 50% en publicidad por 1 mes completo
@@ -482,7 +486,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Botón Reviews - RESPONSIVE */}
+      {/* Botón Reviews */}
       <section className="container mx-auto px-3 sm:px-4 py-5 sm:py-6">
         <div className="max-w-4xl mx-auto text-center">
           <button 
@@ -493,13 +497,13 @@ export default function Home() {
             ⭐ Ver Reseñas de Clientes
             <span className="text-xs bg-gray-500 px-2 py-1 rounded">Próximamente</span>
           </button>
-          <p className="text-gray-500 text-xs sm:text-sm mt-2 px-4">
+          <p className="text-gray-500 text-xs sm:text-sm mt-2">
             Función en desarrollo
           </p>
         </div>
       </section>
 
-      {/* Call to Action - Publicar Anuncio - RESPONSIVE */}
+      {/* Call to Action - Publicar Anuncio */}
       <section className="bg-gray-100 py-6 sm:py-8">
         <div className="container mx-auto px-3 sm:px-4 text-center">
           <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-5 sm:p-6 border-t-4 border-pink-500">
@@ -519,7 +523,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Sección informativa - RESPONSIVE */}
+      {/* Sección informativa */}
       <section className="bg-white py-5 sm:py-6 border-t border-gray-200">
         <div className="container mx-auto px-3 sm:px-4">
           <div className="max-w-4xl mx-auto">
@@ -540,7 +544,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer - 100% RESPONSIVE */}
+      {/* Footer */}
       <footer className="bg-gray-800 text-gray-300 py-6 sm:py-8">
         <div className="container mx-auto px-3 sm:px-4">
           <div className="max-w-4xl mx-auto">
@@ -560,8 +564,7 @@ export default function Home() {
               </p>
             </div>
           </div>
-
-          {/* Sección Legal - RESPONSIVE */}
+          {/* Sección Legal */}
           <div className="max-w-4xl mx-auto mt-6 sm:mt-8 pt-5 sm:pt-6 border-t border-gray-700">
             <h4 className="text-base sm:text-lg font-bold text-white mb-2 sm:mb-3 text-center">
               Información
