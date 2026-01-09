@@ -1,6 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Script from "next/script";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -148,7 +147,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="es">
       <head>
-        {/* Structured Data (JSON-LD) mejorado con todas las ciudades */}
+        {/* Structured Data (JSON-LD) */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -179,55 +178,16 @@ export default function RootLayout({ children }) {
                 "name": "Paraguay"
               },
               "serviceArea": [
-                // CENTRAL
                 "Asuncion", "Lambare", "Fernando de la Mora", "Luque", "San Lorenzo", 
                 "Mariano Roque Alonso", "Capita", "Ita", "Ypane",
-                
-                // ALTO PARANÁ
                 "Ciudad del Este", "Hernandarias", "Presidente Franco", "Minga Guazu",
-                "Puerto Presidente Stroessner", "Santa Rita",
-                
-                // ITAPÚA
-                "Encarnacion", "Cambyreta", "Fram", "Natalio", "Carmen del Parana",
-                "Capitan Miranda",
-                
-                // CORDILLERA
-                "Caacupe", "Aregua", "Piribebuy", "Arroyos y Esteros", "San Bernardino",
-                "Tobati",
-                
-                // CONCEPCIÓN
-                "Concepcion", "Belen", "Loreto", "San Carlos", "Horqueta",
-                
-                // SAN PEDRO
-                "San Pedro", "San Estanislao", "Villa del Rosario", "Antequera", "Chore",
-                
-                // GUAIRÁ
-                "Salto del Guaira", "Villarrica", "Independencia", "Colonia Mauricio Jose Troche",
-                
-                // CAAGUAZÚ
-                "Coronel Oviedo", "Doctor Juan Eulogio Estigarribia", "Doctor Juan Manuel Frutos",
-                "Repatriacion",
-                
-                // AMAMBAY
-                "Pedro Juan Caballero", "Bella Vista", "Capitan Bado",
-                
-                // CANINDEYÚ
-                "Salto del Guaira", "Corpus Christi", "Ypejhu", "Nueva Esperanza",
-                
-                // MISIONES
-                "San Juan Bautista", "Ayolas", "Santiago", "Santa Rosa",
-                
-                // ÑEEMBUCÚ
-                "Pilar", "Humatia", "San Juan Bautista de Neembucu",
-                
-                // PRESIDENTE HAYES
-                "Villa Hayes", "Benjamin Aceval", "Nanawa", "Puerto Pinasco",
-                
-                // ALTO PARAGUAY
-                "Fuerte Olimpo", "Bahia Negra",
-                
-                // BOQUERÓN
-                "Filadelfia", "Loma Plata", "Mariscal Estigarribia"
+                "Encarnacion", "Cambyreta", "Fram", "Natalio",
+                "Caacupe", "Aregua", "Piribebuy", "San Bernardino",
+                "Concepcion", "Belen", "Loreto", "Horqueta",
+                "San Pedro", "San Estanislao", "Villa del Rosario",
+                "Villarrica", "Salto del Guaira", "Independencia",
+                "Coronel Oviedo", "Pedro Juan Caballero", "Pilar",
+                "Villa Hayes", "Fuerte Olimpo", "Filadelfia"
               ],
               "mainEntity": {
                 "@type": "ItemList",
@@ -251,26 +211,6 @@ export default function RootLayout({ children }) {
                     "@type": "ListItem",
                     "position": 4,
                     "name": "Escorts en Caacupé - Cordillera"
-                  },
-                  {
-                    "@type": "ListItem",
-                    "position": 5,
-                    "name": "Escorts en Salto del Guairá - Guairá"
-                  },
-                  {
-                    "@type": "ListItem",
-                    "position": 6,
-                    "name": "Escorts en Coronel Oviedo - Caaguazú"
-                  },
-                  {
-                    "@type": "ListItem",
-                    "position": 7,
-                    "name": "Escorts en Pedro Juan Caballero - Amambay"
-                  },
-                  {
-                    "@type": "ListItem",
-                    "position": 8,
-                    "name": "Escorts en Pilar - Ñeembucú"
                   }
                 ]
               }
@@ -278,36 +218,13 @@ export default function RootLayout({ children }) {
           }}
         />
 
-        {/* Favicon mejorado */}
+        {/* Favicon */}
         <link rel="icon" href="/logo_escorts.jpg" type="image/jpeg" />
         <link rel="apple-touch-icon" href="/logo_escorts.jpg" />
         <meta name="theme-color" content="#ec4899" />
-
-        {/* Viewport para mobile */}
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {children}
-
-        {/* Script adicional para SEO */}
-        <Script id="seo-script" strategy="afterInteractive">
-          {`
-            // Script para mejorar métricas de usuario
-            if (typeof window !== 'undefined') {
-              // Marcar que el usuario es mayor de edad
-              if (!localStorage.getItem('adult-verified')) {
-                localStorage.setItem('adult-verified', 'true');
-              }
-              
-              // Prevenir zoom en mobile
-              document.addEventListener('touchmove', function (event) {
-                if (event.scale !== 1) { event.preventDefault(); }
-              }, { passive: false });
-            }
-          `}
-        </Script>
       </body>
     </html>
   );
