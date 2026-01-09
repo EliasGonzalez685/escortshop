@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation'
 
 export default function Home() {
   const router = useRouter()
-  const [showAgeVerification, setShowAgeVerification] = useState(true)
+  const [showAgeVerification, setShowAgeVerification] = useState(true) // SIEMPRE empieza en true
   const [usuario, setUsuario] = useState(null)
   const [userRole, setUserRole] = useState(null)
 
@@ -23,29 +23,62 @@ export default function Home() {
       setShowAgeVerification(false)
     }
     
-    // Verificar si ya aceptó previamente
-    const isVerified = typeof window !== 'undefined' ? localStorage.getItem('age-verified') : null
-    if (isVerified === 'true') {
-      setShowAgeVerification(false)
-    }
+    // YA NO verificamos localStorage - queremos que aparezca SIEMPRE
+    // El modal aparecerá cada vez que entres a la página principal
+    
   }, [])
 
-  // FIX CRÍTICO: Bloquear scroll del body cuando modal está activo
+  // Resetear el modal cuando el componente se monte (cada vez que vuelves a home)
+  useEffect(() => {
+    // Cada vez que vuelves a esta página, el modal se mostrará
+    setShowAgeVerification(true)
+  }, [])
+
+  // FIX MEJORADO: Bloquear scroll completamente cuando modal está activo
   useEffect(() => {
     if (showAgeVerification) {
+      // Guardar posición actual del scroll
+      const scrollY = window.scrollY
+      
+      // Bloquear scroll del body - TÉCNICA MEJORADA
+      document.body.style.position = 'fixed'
+      document.body.style.top = `-${scrollY}px`
+      document.body.style.left = '0'
+      document.body.style.right = '0'
+      document.body.style.width = '100%'
       document.body.style.overflow = 'hidden'
-      document.body.style.height = '100vh'
       document.documentElement.style.overflow = 'hidden'
+      
+      // Prevenir scroll en móviles
+      document.body.style.touchAction = 'none'
     } else {
-      document.body.style.overflow = 'auto'
-      document.body.style.height = 'auto'
-      document.documentElement.style.overflow = 'auto'
+      // Restaurar scroll
+      const scrollY = document.body.style.top
+      document.body.style.position = ''
+      document.body.style.top = ''
+      document.body.style.left = ''
+      document.body.style.right = ''
+      document.body.style.width = ''
+      document.body.style.overflow = ''
+      document.documentElement.style.overflow = ''
+      document.body.style.touchAction = ''
+      
+      // Restaurar posición del scroll
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0') * -1)
+      }
     }
     
     return () => {
-      document.body.style.overflow = 'auto'
-      document.body.style.height = 'auto'
-      document.documentElement.style.overflow = 'auto'
+      // Cleanup al desmontar
+      document.body.style.position = ''
+      document.body.style.top = ''
+      document.body.style.left = ''
+      document.body.style.right = ''
+      document.body.style.width = ''
+      document.body.style.overflow = ''
+      document.documentElement.style.overflow = ''
+      document.body.style.touchAction = ''
     }
   }, [showAgeVerification])
 
@@ -76,67 +109,109 @@ export default function Home() {
 
   const handleAgeAccept = () => {
     setShowAgeVerification(false)
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('age-verified', 'true')
-    }
+    // YA NO guardamos en localStorage - queremos que aparezca cada vez
+    // El usuario debe aceptar cada vez que entra a la página principal
   }
 
   const handleAgeReject = () => {
     window.location.href = 'https://www.google.com'
   }
 
+  // MODAL DE VERIFICACIÓN DE EDAD - 100% RESPONSIVE Y FUNCIONAL
+  // AHORA APARECE CADA VEZ QUE ENTRAS A LA PÁGINA
   if (showAgeVerification) {
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[9999] p-4 overflow-y-auto">
-        <div className="bg-white rounded-lg max-w-md w-full p-6 sm:p-8 text-center my-4">
-          <div className="mb-4 sm:mb-6">
-            <Image 
-              src="/logo_escorts.jpeg" 
-              alt="EscortShop" 
-              width={150} 
-              height={45}
-              className="object-contain mx-auto mb-3"
-            />
-          </div>
-          
-          <h2 className="text-xl sm:text-2xl font-bold text-red-600 mb-3 sm:mb-4">
-            POR FAVOR LEER LAS ADVERTENCIAS
-          </h2>
-          
-          <div className="text-left mb-4 sm:mb-6 space-y-2 sm:space-y-3">
-            <p className="text-sm sm:text-base text-gray-700">
-              Este sitio contiene contenido para adultos y está destinado únicamente a personas mayores de 18 años.
-            </p>
+      <div 
+        className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-4"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.95)',
+          overflowY: 'auto',
+          WebkitOverflowScrolling: 'touch'
+        }}
+      >
+        {/* Contenedor scrolleable */}
+        <div className="w-full min-h-full flex items-center justify-center py-4 sm:py-8">
+          {/* Modal Card - 100% RESPONSIVE */}
+          <div className="bg-white rounded-xl max-w-md w-full mx-auto shadow-2xl" 
+               style={{ maxHeight: '95vh', overflowY: 'auto' }}>
             
-            <p className="text-sm sm:text-base text-gray-700">
-              Al continuar, usted confirma que:
-            </p>
-            
-            <ul className="list-disc list-inside text-sm sm:text-base text-gray-700 space-y-1 sm:space-y-2 ml-2 sm:ml-4">
-              <li>Es mayor de 18 años</li>
-              <li>Acepta el visionado de textos e imágenes explícitas</li>
-              <li>Comprende que este contenido está destinado a un público adulto</li>
-              <li>No se ofende por material de naturaleza adulta</li>
-            </ul>
-            
-            <p className="text-sm sm:text-base text-gray-700 font-semibold">
-              Si es menor de edad o no desea ver este tipo de contenido, por favor abandone este sitio.
-            </p>
-          </div>
-          
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-            <button
-              onClick={handleAgeReject}
-              className="flex-1 bg-gray-500 text-white py-2.5 sm:py-3 rounded-lg hover:bg-gray-600 font-medium text-sm sm:text-base"
-            >
-              Rechazar - Salir
-            </button>
-            <button
-              onClick={handleAgeAccept}
-              className="flex-1 bg-pink-600 text-white py-2.5 sm:py-3 rounded-lg hover:bg-pink-700 font-medium text-sm sm:text-base"
-            >
-              Aceptar - Entrar
-            </button>
+            <div className="p-5 sm:p-8">
+              {/* Logo/Icono */}
+              <div className="mb-5 sm:mb-6 text-center">
+                <div className="w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full mx-auto flex items-center justify-center text-5xl sm:text-6xl mb-3 shadow-lg animate-pulse">
+                  🔞
+                </div>
+                <Image 
+                  src="/logo_escorts.jpeg" 
+                  alt="EscortShop" 
+                  width={150} 
+                  height={45}
+                  className="object-contain mx-auto"
+                />
+              </div>
+              
+              {/* Título */}
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-red-600 mb-4 sm:mb-5 text-center leading-tight">
+                POR FAVOR LEER LAS ADVERTENCIAS
+              </h2>
+              
+              {/* Badge informativo */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4 text-center">
+                <p className="text-xs sm:text-sm text-blue-800 font-medium">
+                  ℹ️ Este aviso aparece cada vez que visitas la página principal
+                </p>
+              </div>
+              
+              {/* Contenido - SCROLLEABLE EN MÓVIL */}
+              <div className="text-left mb-5 sm:mb-6 space-y-3 bg-gray-50 p-4 sm:p-5 rounded-lg max-h-[40vh] sm:max-h-none overflow-y-auto">
+                <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
+                  Este sitio contiene contenido para adultos y está destinado únicamente a personas mayores de 18 años.
+                </p>
+                
+                <p className="text-sm sm:text-base text-gray-700 font-semibold">
+                  Al continuar, usted confirma que:
+                </p>
+                
+                <ul className="list-disc list-inside text-sm sm:text-base text-gray-700 space-y-2 ml-2 sm:ml-4">
+                  <li className="leading-relaxed">Es mayor de 18 años</li>
+                  <li className="leading-relaxed">Acepta el visionado de textos e imágenes explícitas</li>
+                  <li className="leading-relaxed">Comprende que este contenido está destinado a un público adulto</li>
+                  <li className="leading-relaxed">No se ofende por material de naturaleza adulta</li>
+                </ul>
+                
+                <div className="bg-yellow-50 border-l-4 border-yellow-500 p-3 mt-4 rounded">
+                  <p className="text-xs sm:text-sm text-yellow-800 font-semibold leading-relaxed">
+                    ⚠️ Si es menor de edad o no desea ver este tipo de contenido, por favor abandone este sitio.
+                  </p>
+                </div>
+              </div>
+              
+              {/* Botones - 100% RESPONSIVE */}
+              <div className="flex flex-col gap-3">
+                <button
+                  onClick={handleAgeReject}
+                  className="w-full bg-gray-600 text-white py-3 sm:py-3.5 rounded-lg hover:bg-gray-700 active:bg-gray-800 font-semibold text-sm sm:text-base transition-all hover:scale-[1.02] active:scale-95 shadow-md"
+                >
+                  ❌ Rechazar - Salir
+                </button>
+                <button
+                  onClick={handleAgeAccept}
+                  className="w-full bg-gradient-to-r from-pink-600 to-purple-600 text-white py-3 sm:py-3.5 rounded-lg hover:from-pink-700 hover:to-purple-700 active:from-pink-800 active:to-purple-800 font-semibold text-sm sm:text-base transition-all hover:scale-[1.02] active:scale-95 shadow-lg"
+                >
+                  ✅ Aceptar - Entrar al Sitio
+                </button>
+              </div>
+              
+              {/* Footer del modal */}
+              <p className="text-xs text-gray-500 mt-4 text-center leading-relaxed">
+                Al hacer clic en "Aceptar", confirmas que eres mayor de edad según las leyes de tu país.
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -385,7 +460,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Sección TODOS los Departamentos con ciudades */}
+{/* Sección TODOS los Departamentos con ciudades - 100% RESPONSIVE */}
       <section className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
         <h2 className="text-xl sm:text-2xl font-bold text-center mb-5 sm:mb-6 text-gray-800">
           Encuentra Escorts en los 17 Departamentos
@@ -400,7 +475,7 @@ export default function Home() {
             {todosDepartamentos.map((depto) => (
               <div key={depto.nombre} className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-4 sm:p-5 border border-gray-200">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className={`${depto.color} w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center text-base sm:text-lg`}>
+                  <div className={`${depto.color} w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center text-base sm:text-lg shrink-0`}>
                     📍
                   </div>
                   <div>
@@ -447,23 +522,24 @@ export default function Home() {
         </div>
       </section>
 
-      {/* BANNER 1: Anuncia con nosotros */}
+      {/* BANNER 1: Anuncia con nosotros - 100% RESPONSIVE */}
       <section className="container mx-auto px-3 sm:px-4 py-4 sm:py-5">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-green-600 rounded-lg shadow-lg p-4 sm:p-5 text-white">
+          <div className="bg-green-600 rounded-lg shadow-lg p-4 sm:p-6 text-white">
             <div className="flex flex-col items-center justify-center gap-3 text-center">
               <span className="text-3xl sm:text-4xl">📢</span>
               <div>
-                <h3 className="text-lg sm:text-xl font-bold mb-1">ANUNCIA CON NOSOTROS</h3>
-                <p className="text-sm sm:text-base mb-2">Pagos por Transferencia o Giros</p>
+                <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-2">ANUNCIA CON NOSOTROS</h3>
+                <p className="text-sm sm:text-base mb-3">Pagos por Transferencia o Giros</p>
                 <a 
                   href="https://wa.me/595992420313?text=Hola,%20quiero%20información%20sobre%20publicar%20un%20anuncio"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-white text-green-600 px-3 sm:px-4 py-2 rounded-lg font-bold text-xs sm:text-sm hover:bg-green-50 transition-all"
+                  className="inline-flex items-center gap-2 bg-white text-green-600 px-4 sm:px-5 py-2.5 sm:py-3 rounded-lg font-bold text-sm sm:text-base hover:bg-green-50 transition-all shadow-md hover:shadow-lg"
                 >
-                  <span className="text-xl">📱</span>
-                  Contactanos: 0992420313
+                  <span className="text-xl sm:text-2xl">📱</span>
+                  <span className="hidden sm:inline">Contáctanos: 0992420313</span>
+                  <span className="sm:hidden">WhatsApp: 0992420313</span>
                 </a>
               </div>
             </div>
@@ -471,14 +547,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* BANNER 2: Promo por apertura */}
+      {/* BANNER 2: Promo por apertura - 100% RESPONSIVE */}
       <section className="container mx-auto px-3 sm:px-4 py-4 sm:py-5">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-orange-500 rounded-lg shadow-lg p-4 sm:p-5 text-white">
+          <div className="bg-orange-500 rounded-lg shadow-lg p-4 sm:p-6 text-white">
             <div className="text-center">
               <span className="text-3xl sm:text-4xl mb-2 inline-block">🎁</span>
-              <h3 className="text-lg sm:text-xl font-bold mb-2">PROMO POR APERTURA</h3>
-              <p className="text-sm sm:text-base font-semibold">
+              <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-2 sm:mb-3">PROMO POR APERTURA</h3>
+              <p className="text-sm sm:text-base md:text-lg font-semibold leading-relaxed">
                 Recomendando a alguien tenés 50% en publicidad por 1 mes completo
               </p>
             </div>
@@ -486,36 +562,37 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Botón Reviews */}
+      {/* Botón Reviews - 100% RESPONSIVE */}
       <section className="container mx-auto px-3 sm:px-4 py-5 sm:py-6">
         <div className="max-w-4xl mx-auto text-center">
           <button 
             disabled
-            className="bg-gray-400 cursor-not-allowed text-white px-4 sm:px-5 py-3 rounded-xl font-bold text-sm sm:text-base shadow-lg inline-flex items-center gap-2 opacity-60"
+            className="bg-gray-400 cursor-not-allowed text-white px-4 sm:px-6 py-3 sm:py-3.5 rounded-xl font-bold text-sm sm:text-base shadow-lg inline-flex items-center gap-2 opacity-60 w-full sm:w-auto justify-center"
             title="Próximamente disponible"
           >
-            ⭐ Ver Reseñas de Clientes
-            <span className="text-xs bg-gray-500 px-2 py-1 rounded">Próximamente</span>
+            <span className="text-lg sm:text-xl">⭐</span>
+            <span>Ver Reseñas de Clientes</span>
+            <span className="text-xs bg-gray-500 px-2 py-1 rounded ml-1">Próximamente</span>
           </button>
-          <p className="text-gray-500 text-xs sm:text-sm mt-2">
+          <p className="text-gray-500 text-xs sm:text-sm mt-3">
             Función en desarrollo
           </p>
         </div>
       </section>
 
-      {/* Call to Action - Publicar Anuncio */}
-      <section className="bg-gray-100 py-6 sm:py-8">
+      {/* Call to Action - Publicar Anuncio - 100% RESPONSIVE */}
+      <section className="bg-gray-100 py-6 sm:py-8 md:py-10">
         <div className="container mx-auto px-3 sm:px-4 text-center">
-          <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-5 sm:p-6 border-t-4 border-pink-500">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3">
+          <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-5 sm:p-6 md:p-8 border-t-4 border-pink-500">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-3 sm:mb-4">
               ¿Deseas publicar un anuncio?
             </h2>
-            <p className="text-sm sm:text-base text-gray-600 mb-4">
-              Regístrate y comienza a ofrecer tus servicios
+            <p className="text-sm sm:text-base md:text-lg text-gray-600 mb-4 sm:mb-5 leading-relaxed">
+              Regístrate y comienza a ofrecer tus servicios en todo Paraguay
             </p>
             
             <Link href="/registro">
-              <button className="bg-pink-600 text-white px-5 sm:px-6 py-3 rounded-lg text-base sm:text-lg font-bold hover:bg-pink-700 transition-all shadow-lg hover:shadow-xl w-full sm:w-auto">
+              <button className="bg-pink-600 text-white px-5 sm:px-6 md:px-8 py-3 sm:py-3.5 rounded-lg text-base sm:text-lg font-bold hover:bg-pink-700 active:bg-pink-800 transition-all shadow-lg hover:shadow-xl w-full sm:w-auto hover:scale-[1.02] active:scale-95">
                 📝 Registrarse Ahora
               </button>
             </Link>
@@ -523,18 +600,18 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Sección informativa */}
-      <section className="bg-white py-5 sm:py-6 border-t border-gray-200">
+      {/* Sección informativa - 100% RESPONSIVE */}
+      <section className="bg-white py-5 sm:py-6 md:py-8 border-t border-gray-200">
         <div className="container mx-auto px-3 sm:px-4">
           <div className="max-w-4xl mx-auto">
-            <div className="text-gray-600 text-xs sm:text-sm leading-relaxed space-y-3">
+            <div className="text-gray-600 text-xs sm:text-sm md:text-base leading-relaxed space-y-3 sm:space-y-4">
               <p>
                 <strong className="text-gray-800">EscortShop Paraguay</strong> es tu portal para encontrar las mejores escorts y acompañantes en todo el país. 
                 Somos el directorio más completo, con perfiles de escorts independientes en todos los departamentos.
               </p>
               
-              <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 sm:p-4 my-3">
-                <p className="text-gray-700 text-xs sm:text-sm leading-relaxed">
+              <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 sm:p-4 my-4 rounded">
+                <p className="text-gray-700 text-xs sm:text-sm md:text-base leading-relaxed">
                   <strong className="text-yellow-800">⚠️ Aviso importante:</strong> EscortShop es una plataforma de publicidad para escorts independientes, 
                   no somos una agencia. Cualquier relación o acuerdo que establezcas es bajo tu propia responsabilidad.
                 </p>
@@ -544,44 +621,49 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gray-800 text-gray-300 py-6 sm:py-8">
+      {/* Footer - 100% RESPONSIVE */}
+      <footer className="bg-gray-800 text-gray-300 py-6 sm:py-8 md:py-10">
         <div className="container mx-auto px-3 sm:px-4">
           <div className="max-w-4xl mx-auto">
-            <h3 className="text-lg sm:text-xl font-bold text-white mb-3 sm:mb-4 text-center">
+            <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white mb-3 sm:mb-4 text-center">
               EscortShop Paraguay
             </h3>
             
-            <div className="space-y-3 text-xs sm:text-sm leading-relaxed">
-              <p>
+            <div className="space-y-3 sm:space-y-4 text-xs sm:text-sm md:text-base leading-relaxed">
+              <p className="text-center sm:text-left">
                 <strong className="text-white">EscortShop.com</strong> es la página de contactos con avisos eróticos para adultos líder en Paraguay.
               </p>
               
-              <p>
+              <p className="text-center sm:text-left">
                 Busca y encuentra en cualquiera de nuestras categorías: <strong className="text-pink-400">escorts mujeres</strong>, 
                 <strong className="text-purple-400"> travestis</strong>, <strong className="text-blue-400">escorts gay</strong>, 
                 <strong className="text-red-400"> parejas y swingers</strong>.
               </p>
             </div>
           </div>
-          {/* Sección Legal */}
+          
+          {/* Sección Legal - 100% RESPONSIVE */}
           <div className="max-w-4xl mx-auto mt-6 sm:mt-8 pt-5 sm:pt-6 border-t border-gray-700">
-            <h4 className="text-base sm:text-lg font-bold text-white mb-2 sm:mb-3 text-center">
-              Información
+            <h4 className="text-base sm:text-lg font-bold text-white mb-3 sm:mb-4 text-center">
+              Información Legal
             </h4>
-            <div className="grid grid-cols-2 gap-2 sm:gap-3 text-xs text-gray-400 text-center">
-              <Link href="/terminos" className="hover:text-pink-400 transition-colors">
-                Términos y Condiciones
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm text-gray-400 text-center">
+              <Link href="/terminos" className="hover:text-pink-400 transition-colors py-2 sm:py-0">
+                📄 Términos y Condiciones
               </Link>
-              <Link href="/contacto" className="hover:text-pink-400 transition-colors">
-                Contacto
+              <Link href="/contacto" className="hover:text-pink-400 transition-colors py-2 sm:py-0">
+                📧 Contacto
               </Link>
             </div>
           </div>
 
-          <div className="text-center mt-4 sm:mt-5 pt-4 sm:pt-5 border-t border-gray-700">
-            <p className="text-xs sm:text-sm text-gray-400">
-              © 2025 EscortShop Paraguay. | Sitio para mayores de 18 años.
+          {/* Copyright - 100% RESPONSIVE */}
+          <div className="text-center mt-5 sm:mt-6 pt-4 sm:pt-5 border-t border-gray-700">
+            <p className="text-xs sm:text-sm text-gray-400 leading-relaxed">
+              © 2025 EscortShop Paraguay. Todos los derechos reservados.
+            </p>
+            <p className="text-xs sm:text-sm text-gray-500 mt-2">
+              🔞 Sitio exclusivo para mayores de 18 años
             </p>
           </div>
         </div>
