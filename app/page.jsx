@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation'
 
 export default function Home() {
   const router = useRouter()
-  const [showAgeVerification, setShowAgeVerification] = useState(true) // SIEMPRE empieza en true
+  const [showAgeVerification, setShowAgeVerification] = useState(true)
   const [usuario, setUsuario] = useState(null)
   const [userRole, setUserRole] = useState(null)
 
@@ -22,25 +22,18 @@ export default function Home() {
     if (isGooglebot) {
       setShowAgeVerification(false)
     }
-    
-    // YA NO verificamos localStorage - queremos que aparezca SIEMPRE
-    // El modal aparecerá cada vez que entres a la página principal
-    
   }, [])
 
-  // Resetear el modal cuando el componente se monte (cada vez que vuelves a home)
+  // Resetear el modal cuando el componente se monte
   useEffect(() => {
-    // Cada vez que vuelves a esta página, el modal se mostrará
     setShowAgeVerification(true)
   }, [])
 
-  // FIX MEJORADO: Bloquear scroll completamente cuando modal está activo
+  // Bloquear scroll cuando modal está activo
   useEffect(() => {
     if (showAgeVerification) {
-      // Guardar posición actual del scroll
       const scrollY = window.scrollY
       
-      // Bloquear scroll del body - TÉCNICA MEJORADA
       document.body.style.position = 'fixed'
       document.body.style.top = `-${scrollY}px`
       document.body.style.left = '0'
@@ -48,11 +41,8 @@ export default function Home() {
       document.body.style.width = '100%'
       document.body.style.overflow = 'hidden'
       document.documentElement.style.overflow = 'hidden'
-      
-      // Prevenir scroll en móviles
       document.body.style.touchAction = 'none'
     } else {
-      // Restaurar scroll
       const scrollY = document.body.style.top
       document.body.style.position = ''
       document.body.style.top = ''
@@ -63,14 +53,12 @@ export default function Home() {
       document.documentElement.style.overflow = ''
       document.body.style.touchAction = ''
       
-      // Restaurar posición del scroll
       if (scrollY) {
         window.scrollTo(0, parseInt(scrollY || '0') * -1)
       }
     }
     
     return () => {
-      // Cleanup al desmontar
       document.body.style.position = ''
       document.body.style.top = ''
       document.body.style.left = ''
@@ -109,16 +97,13 @@ export default function Home() {
 
   const handleAgeAccept = () => {
     setShowAgeVerification(false)
-    // YA NO guardamos en localStorage - queremos que aparezca cada vez
-    // El usuario debe aceptar cada vez que entra a la página principal
   }
 
   const handleAgeReject = () => {
     window.location.href = 'https://www.google.com'
   }
 
-  // MODAL DE VERIFICACIÓN DE EDAD - 100% RESPONSIVE Y FUNCIONAL
-  // AHORA APARECE CADA VEZ QUE ENTRAS A LA PÁGINA
+  // MODAL DE VERIFICACIÓN DE EDAD - 100% RESPONSIVE
   if (showAgeVerification) {
     return (
       <div 
@@ -134,40 +119,34 @@ export default function Home() {
           WebkitOverflowScrolling: 'touch'
         }}
       >
-        {/* Contenedor scrolleable */}
         <div className="w-full min-h-full flex items-center justify-center py-4 sm:py-8">
-          {/* Modal Card - 100% RESPONSIVE */}
           <div className="bg-white rounded-xl max-w-md w-full mx-auto shadow-2xl" 
                style={{ maxHeight: '95vh', overflowY: 'auto' }}>
             
             <div className="p-5 sm:p-8">
-              {/* Logo/Icono */}
               <div className="mb-5 sm:mb-6 text-center">
                 <div className="w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full mx-auto flex items-center justify-center text-5xl sm:text-6xl mb-3 shadow-lg animate-pulse">
                   🔞
                 </div>
                 <Image 
                   src="/logo_escorts.jpeg" 
-                  alt="EscortShop" 
+                  alt="EscortShop Paraguay - Escorts y Acompañantes" 
                   width={150} 
                   height={45}
                   className="object-contain mx-auto"
                 />
               </div>
               
-              {/* Título */}
               <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-red-600 mb-4 sm:mb-5 text-center leading-tight">
                 POR FAVOR LEER LAS ADVERTENCIAS
               </h2>
               
-              {/* Badge informativo */}
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4 text-center">
                 <p className="text-xs sm:text-sm text-blue-800 font-medium">
                   ℹ️ Este aviso aparece cada vez que visitas la página principal
                 </p>
               </div>
               
-              {/* Contenido - SCROLLEABLE EN MÓVIL */}
               <div className="text-left mb-5 sm:mb-6 space-y-3 bg-gray-50 p-4 sm:p-5 rounded-lg max-h-[40vh] sm:max-h-none overflow-y-auto">
                 <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                   Este sitio contiene contenido para adultos y está destinado únicamente a personas mayores de 18 años.
@@ -191,7 +170,6 @@ export default function Home() {
                 </div>
               </div>
               
-              {/* Botones - 100% RESPONSIVE */}
               <div className="flex flex-col gap-3">
                 <button
                   onClick={handleAgeReject}
@@ -207,7 +185,6 @@ export default function Home() {
                 </button>
               </div>
               
-              {/* Footer del modal */}
               <p className="text-xs text-gray-500 mt-4 text-center leading-relaxed">
                 Al hacer clic en "Aceptar", confirmas que eres mayor de edad según las leyes de tu país.
               </p>
@@ -218,7 +195,7 @@ export default function Home() {
     )
   }
 
-  // TODOS los 17 departamentos de Paraguay
+  // DATOS DE LOS 17 DEPARTAMENTOS
   const todosDepartamentos = [
     {
       nombre: 'Central',
@@ -309,6 +286,31 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Structured Data para la página principal */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            "name": "EscortShop Paraguay - Escorts y Acompañantes en Todo el País",
+            "description": "Encuentra escorts, putas, trans, gay y acompañantes en los 17 departamentos de Paraguay. Anuncios verificados en Asunción, Ciudad del Este, Encarnación y más.",
+            "url": "https://escortshoppy.com",
+            "inLanguage": "es-PY",
+            "isPartOf": {
+              "@type": "WebSite",
+              "name": "EscortShop Paraguay",
+              "url": "https://escortshoppy.com"
+            },
+            "about": {
+              "@type": "Service",
+              "serviceType": "Anuncios Clasificados para Adultos",
+              "areaServed": "Paraguay"
+            }
+          })
+        }}
+      />
+
       {/* Header - 100% RESPONSIVE */}
       <header className="bg-white shadow-md sticky top-0 z-50">
         <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
@@ -317,7 +319,7 @@ export default function Home() {
               <Link href="/">
                 <Image 
                   src="/logo_escorts.jpeg" 
-                  alt="EscortShop Paraguay" 
+                  alt="EscortShop Paraguay - Escorts y Acompañantes" 
                   width={180}
                   height={54}
                   className="object-contain cursor-pointer w-40 sm:w-48"
@@ -379,8 +381,8 @@ export default function Home() {
           </div>
         </div>
       </header>
-
-      {/* Hero Section - CON LOS 17 DEPARTAMENTOS */}
+      
+{/* Hero Section - CON LOS 17 DEPARTAMENTOS Y SEO */}
       <section className="bg-gradient-to-r from-pink-600 to-purple-600 text-white py-8 sm:py-10 md:py-12">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
@@ -388,7 +390,7 @@ export default function Home() {
           </h1>
           
           <p className="text-base sm:text-lg md:text-xl mb-4">
-            Encuentra escorts, putas, trans y gay en los 17 departamentos
+            Encuentra escorts, putas, prostitutas, trans y gay en los 17 departamentos
           </p>
           
           {/* LOS 17 DEPARTAMENTOS EN EL HERO */}
@@ -402,6 +404,7 @@ export default function Home() {
                   key={depto.nombre}
                   href={`/escorts?departamento=${encodeURIComponent(depto.nombre)}`}
                   className="bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-full text-xs sm:text-sm transition-colors inline-block"
+                  aria-label={`Ver escorts en ${depto.nombre}`}
                 >
                   {depto.nombre}
                 </a>
@@ -411,14 +414,52 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Categorías principales - 100% RESPONSIVE */}
+      {/* Categorías principales - 100% RESPONSIVE con Schema */}
       <section className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
         <h2 className="text-xl sm:text-2xl font-bold text-center mb-5 sm:mb-6 text-gray-800">
           Selecciona una categoría
         </h2>
         
+        {/* Schema para las categorías */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ItemList",
+              "name": "Categorías de Escorts en Paraguay",
+              "itemListElement": [
+                {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": "Escorts Mujeres",
+                  "url": "https://escortshoppy.com/escorts"
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 2,
+                  "name": "Trans y Travestis",
+                  "url": "https://escortshoppy.com/trans"
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 3,
+                  "name": "Escorts Gay",
+                  "url": "https://escortshoppy.com/gay"
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 4,
+                  "name": "Parejas y Swingers",
+                  "url": "https://escortshoppy.com/parejas"
+                }
+              ]
+            })
+          }}
+        />
+        
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 max-w-5xl mx-auto">
-          <Link href="/escorts">
+          <Link href="/escorts" aria-label="Ver escorts mujeres en Paraguay">
             <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all cursor-pointer overflow-hidden group">
               <div className="bg-gradient-to-br from-pink-500 to-pink-600 p-4 sm:p-5 md:p-6 text-center">
                 <div className="text-3xl sm:text-4xl md:text-5xl mb-2 group-hover:scale-110 transition-transform">💃</div>
@@ -428,7 +469,7 @@ export default function Home() {
             </div>
           </Link>
 
-          <Link href="/trans">
+          <Link href="/trans" aria-label="Ver trans y travestis en Paraguay">
             <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all cursor-pointer overflow-hidden group">
               <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-4 sm:p-5 md:p-6 text-center">
                 <div className="text-3xl sm:text-4xl md:text-5xl mb-2 group-hover:scale-110 transition-transform">🦋</div>
@@ -438,7 +479,7 @@ export default function Home() {
             </div>
           </Link>
 
-          <Link href="/gay">
+          <Link href="/gay" aria-label="Ver escorts gay en Paraguay">
             <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all cursor-pointer overflow-hidden group">
               <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-4 sm:p-5 md:p-6 text-center">
                 <div className="text-3xl sm:text-4xl md:text-5xl mb-2 group-hover:scale-110 transition-transform">🌈</div>
@@ -448,7 +489,7 @@ export default function Home() {
             </div>
           </Link>
 
-          <Link href="/parejas">
+          <Link href="/parejas" aria-label="Ver parejas y swingers en Paraguay">
             <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all cursor-pointer overflow-hidden group">
               <div className="bg-gradient-to-br from-red-500 to-red-600 p-4 sm:p-5 md:p-6 text-center">
                 <div className="text-3xl sm:text-4xl md:text-5xl mb-2 group-hover:scale-110 transition-transform">💑</div>
@@ -460,7 +501,7 @@ export default function Home() {
         </div>
       </section>
 
-{/* Sección TODOS los Departamentos con ciudades - 100% RESPONSIVE */}
+      {/* Sección TODOS los Departamentos con ciudades - 100% RESPONSIVE */}
       <section className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
         <h2 className="text-xl sm:text-2xl font-bold text-center mb-5 sm:mb-6 text-gray-800">
           Encuentra Escorts en los 17 Departamentos
@@ -468,7 +509,7 @@ export default function Home() {
         
         <div className="max-w-6xl mx-auto">
           <p className="text-gray-600 mb-6 sm:mb-8 text-center text-sm sm:text-base">
-            Busca anuncios de escorts en todas las ciudades de Paraguay
+            Busca anuncios de escorts, putas, prostitutas, trans y gay en todas las ciudades de Paraguay
           </p>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
@@ -483,6 +524,7 @@ export default function Home() {
                       <a 
                         href={`/escorts?departamento=${encodeURIComponent(depto.nombre)}`}
                         className="hover:text-pink-600 transition-colors"
+                        aria-label={`Ver escorts en ${depto.nombre}`}
                       >
                         {depto.nombre}
                       </a>
@@ -500,6 +542,7 @@ export default function Home() {
                         key={ciudad}
                         href={`/escorts?departamento=${encodeURIComponent(depto.nombre)}&ciudad=${encodeURIComponent(ciudad)}`}
                         className="inline-block bg-gray-50 hover:bg-pink-50 text-gray-700 hover:text-pink-700 text-xs px-2.5 py-1 rounded-full border border-gray-200 hover:border-pink-200 transition-all"
+                        aria-label={`Ver escorts en ${ciudad}, ${depto.nombre}`}
                       >
                         {ciudad}
                       </a>
@@ -511,6 +554,7 @@ export default function Home() {
                   <a
                     href={`/escorts?departamento=${encodeURIComponent(depto.nombre)}`}
                     className="inline-flex items-center gap-1 text-xs sm:text-sm font-medium text-pink-600 hover:text-pink-700"
+                    aria-label={`Ver todos los anuncios en ${depto.nombre}`}
                   >
                     <span>Ver anuncios en {depto.nombre}</span>
                     <span className="text-sm">→</span>
@@ -536,6 +580,7 @@ export default function Home() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 bg-white text-green-600 px-4 sm:px-5 py-2.5 sm:py-3 rounded-lg font-bold text-sm sm:text-base hover:bg-green-50 transition-all shadow-md hover:shadow-lg"
+                  aria-label="Contactar por WhatsApp para publicar anuncio"
                 >
                   <span className="text-xl sm:text-2xl">📱</span>
                   <span className="hidden sm:inline">Contáctanos: 0992420313</span>
@@ -569,6 +614,7 @@ export default function Home() {
             disabled
             className="bg-gray-400 cursor-not-allowed text-white px-4 sm:px-6 py-3 sm:py-3.5 rounded-xl font-bold text-sm sm:text-base shadow-lg inline-flex items-center gap-2 opacity-60 w-full sm:w-auto justify-center"
             title="Próximamente disponible"
+            aria-label="Reseñas de clientes - Próximamente"
           >
             <span className="text-lg sm:text-xl">⭐</span>
             <span>Ver Reseñas de Clientes</span>
@@ -600,14 +646,20 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Sección informativa - 100% RESPONSIVE */}
+      {/* Sección informativa - 100% RESPONSIVE con Keywords */}
       <section className="bg-white py-5 sm:py-6 md:py-8 border-t border-gray-200">
         <div className="container mx-auto px-3 sm:px-4">
           <div className="max-w-4xl mx-auto">
             <div className="text-gray-600 text-xs sm:text-sm md:text-base leading-relaxed space-y-3 sm:space-y-4">
               <p>
-                <strong className="text-gray-800">EscortShop Paraguay</strong> es tu portal para encontrar las mejores escorts y acompañantes en todo el país. 
-                Somos el directorio más completo, con perfiles de escorts independientes en todos los departamentos.
+                <strong className="text-gray-800">EscortShop Paraguay</strong> es tu portal para encontrar las mejores escorts, putas, prostitutas y acompañantes en todo el país. 
+                Somos el directorio más completo, con perfiles de escorts independientes en todos los departamentos. Encuentra escorts en Asunción, Ciudad del Este, Encarnación, 
+                Salto del Guairá, Luque, San Lorenzo, Capiatá y todas las ciudades principales.
+              </p>
+              
+              <p>
+                Busca <strong>escorts mujeres</strong>, <strong>trans</strong>, <strong>travestis</strong>, <strong>escorts gay</strong>, <strong>parejas</strong> y <strong>swingers</strong> 
+                en los 17 departamentos de Paraguay. También ofrecemos anuncios de masajes eróticos, masajes tántricos y servicios VIP para adultos.
               </p>
               
               <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 sm:p-4 my-4 rounded">
@@ -621,23 +673,59 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer - 100% RESPONSIVE */}
+      {/* Footer - 100% RESPONSIVE con Schema */}
       <footer className="bg-gray-800 text-gray-300 py-6 sm:py-8 md:py-10">
+        {/* Schema Organization para Footer */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "name": "EscortShop Paraguay",
+              "url": "https://escortshoppy.com",
+              "logo": "https://escortshoppy.com/logo_escorts.jpg",
+              "contactPoint": {
+                "@type": "ContactPoint",
+                "telephone": "+595-992-420313",
+                "contactType": "customer service",
+                "areaServed": "PY",
+                "availableLanguage": ["Spanish"]
+              },
+              "sameAs": [
+                "https://escortshoppy.com"
+              ]
+            })
+          }}
+        />
+        
         <div className="container mx-auto px-3 sm:px-4">
           <div className="max-w-4xl mx-auto">
             <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white mb-3 sm:mb-4 text-center">
-              EscortShop Paraguay
+              EscortShop Paraguay - Escorts, Putas y Acompañantes
             </h3>
             
             <div className="space-y-3 sm:space-y-4 text-xs sm:text-sm md:text-base leading-relaxed">
               <p className="text-center sm:text-left">
-                <strong className="text-white">EscortShop.com</strong> es la página de contactos con avisos eróticos para adultos líder en Paraguay.
+                <strong className="text-white">EscortShop.com</strong> es la página de contactos con avisos eróticos para adultos líder en Paraguay. 
+                Encuentra <strong className="text-pink-400">escorts</strong>, <strong className="text-pink-400">putas</strong>, 
+                <strong className="text-pink-400"> prostitutas</strong>, <strong className="text-purple-400"> trans</strong>, 
+                <strong className="text-purple-400"> travestis</strong> y <strong className="text-blue-400"> escorts gay</strong> en tu ciudad.
               </p>
               
               <p className="text-center sm:text-left">
                 Busca y encuentra en cualquiera de nuestras categorías: <strong className="text-pink-400">escorts mujeres</strong>, 
                 <strong className="text-purple-400"> travestis</strong>, <strong className="text-blue-400">escorts gay</strong>, 
-                <strong className="text-red-400"> parejas y swingers</strong>.
+                <strong className="text-red-400"> parejas y swingers</strong>. Anuncios en Asunción, Ciudad del Este, Encarnación, Luque, San Lorenzo y todas las ciudades.
+              </p>
+              
+              <p className="text-center pt-4 sm:pt-6 border-t border-gray-700">
+                <strong className="text-white">Departamentos disponibles:</strong><br/>
+                <span className="text-xs">
+                  Central • Alto Paraná • Itapúa • Caaguazú • San Pedro • Cordillera • 
+                  Concepción • Guairá • Paraguarí • Misiones • Ñeembucú • Amambay • Canindeyú • 
+                  Presidente Hayes • Alto Paraguay • Boquerón • Caazapá
+                </span>
               </p>
             </div>
           </div>

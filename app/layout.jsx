@@ -12,100 +12,22 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "EscortShop Paraguay - Encuentra Escorts y Acompañantes en Todo el País 🇵🇾",
-  description: "Anuncios de escorts, acompañantes y servicios para adultos en todos los departamentos de Paraguay: Asunción, Central, Alto Paraná, Itapúa, Caaguazú, San Pedro, Cordillera, Concepción, Guairá, Paraguarí, Misiones, Ñeembucú, Amambay, Canindeyú, Presidente Hayes, Alto Paraguay, Boquerón. Publica y encuentra anuncios de mujeres, trans, gay y parejas.",
-  keywords: [
-    // DEPARTAMENTOS
-    "escorts Paraguay", "acompañantes Paraguay",
-    
-    // CAPITAL Y CENTRAL
-    "escorts Asunción", "putas Asunción", "trans Asunción", "gay Asunción",
-    "escorts Central", "escorts Lambaré", "escorts Fernando de la Mora", 
-    "escorts Luque", "escorts San Lorenzo", "escorts Mariano Roque Alonso",
-    "escorts Capiatá", "escorts Itá", "escorts Ypané",
-    
-    // ALTO PARANÁ
-    "escorts Ciudad del Este", "putas CDE", "escorts Alto Paraná",
-    "escorts Hernandarias", "escorts Presidente Franco", "escorts Minga Guazú",
-    "escorts Puerto Presidente Stroessner", "escorts Santa Rita",
-    
-    // ITAPÚA
-    "escorts Encarnación", "putas Encarnación", "escorts Itapúa",
-    "escorts Cambyretá", "escorts Fram", "escorts Natalio",
-    "escorts Carmen del Paraná", "escorts Capitán Miranda",
-    
-    // CORDILLERA
-    "escorts Caacupé", "putas Caacupé", "escorts Cordillera",
-    "escorts Areguá", "escorts Piribebuy", "escorts Arroyos y Esteros",
-    "escorts San Bernardino", "escorts Tobatí",
-    
-    // CONCEPCIÓN
-    "escorts Concepción", "putas Concepción", "escorts Belén",
-    "escorts Loreto", "escorts San Carlos", "escorts Horqueta",
-    
-    // SAN PEDRO
-    "escorts San Pedro", "escorts San Estanislao", "escorts Villa del Rosario",
-    "escorts Antequera", "escorts Choré",
-    
-    // GUAIRÁ
-    "escorts Salto del Guairá", "putas Salto del Guairá", "escorts Guairá",
-    "escorts Villarrica", "escorts Independencia", "escorts Colonia Mauricio José Troche",
-    
-    // CAAGUAZÚ
-    "escorts Coronel Oviedo", "escorts Caaguazú", "escorts Doctor Juan Eulogio Estigarribia",
-    "escorts Doctor Juan Manuel Frutos", "escorts Repatriación",
-    
-    // PARAGUARÍ
-    "escorts Paraguarí", "escorts Yaguarón", "escorts Carapeguá",
-    "escorts Ybycuí", "escorts Acahay",
-    
-    // AMAMBAY
-    "escorts Pedro Juan Caballero", "putas Pedro Juan Caballero", "escorts Amambay",
-    "escorts Bella Vista", "escorts Capitán Bado",
-    
-    // CANINDEYÚ
-    "escorts Salto del Guairá", "escorts Canindeyú", "escorts Corpus Christi",
-    "escorts Ypejhú", "escorts Nueva Esperanza",
-    
-    // MISIONES
-    "escorts San Juan Bautista", "escorts Misiones", "escorts Ayolas",
-    "escorts Santiago", "escorts Santa Rosa",
-    
-    // ÑEEMBUCÚ
-    "escorts Pilar", "putas Pilar", "escorts Ñeembucú",
-    "escorts Humaitá", "escorts San Juan Bautista de Ñeembucú",
-    
-    // PRESIDENTE HAYES
-    "escorts Villa Hayes", "escorts Presidente Hayes", "escorts Benjamín Aceval",
-    "escorts Nanawa", "escorts Puerto Pinasco",
-    
-    // ALTO PARAGUAY
-    "escorts Fuerte Olimpo", "escorts Alto Paraguay", "escorts Bahía Negra",
-    
-    // BOQUERÓN
-    "escorts Filadelfia", "escorts Boquerón", "escorts Loma Plata",
-    "escorts Mariscal Estigarribia",
-    
-    // GENERALES
-    "mujeres escorts", "trans Paraguay", "gay escorts", "parejas swingers",
-    "acompañantes VIP", "masajistas Paraguay", "anuncios adultos Paraguay"
-  ].join(", "),
+  title: "EscortShop Paraguay - Escorts y Acompañantes en Todo el País 🇵🇾",
+  description: "Encuentra escorts, acompañantes, trans, gay y servicios para adultos en Paraguay. Anuncios en Asunción, Ciudad del Este, Encarnación, Salto del Guairá y todas las ciudades. La plataforma líder de contactos para adultos.",
+  keywords: "escorts paraguay, acompañantes paraguay, putas paraguay, prostitutas paraguay, meretrices paraguay, damas de compañia paraguay, trans paraguay, gay escorts paraguay, travestis paraguay, transexuales paraguay, shemale paraguay, escorts asuncion, putas asuncion, prostitutas asuncion, acompañantes asuncion, trans asuncion, gay asuncion, escorts ciudad del este, putas ciudad del este, prostitutas ciudad del este, acompañantes cde, trans ciudad del este, gay cde, escorts encarnacion, putas encarnacion, prostitutas encarnacion, acompañantes encarnacion, trans encarnacion, escorts caaguazu, putas caaguazu, prostitutas caaguazu, escorts san pedro, putas san pedro, escorts villarrica, putas villarrica, prostitutas villarrica, escorts concepcion, putas concepcion, escorts pedro juan caballero, putas pedro juan caballero, prostitutas pjc, trans pedro juan caballero, escorts salto del guaira, putas salto del guaira, prostitutas salto del guaira, acompañantes salto del guaira, trans salto del guaira, escorts katueté, putas katueté, escorts corpus christi, escorts ypehú, escorts itanará, escorts canindeyú, escorts coronel oviedo, putas coronel oviedo, escorts luque, putas luque, prostitutas luque, acompañantes luque, escorts fernando de la mora, putas fernando de la mora, prostitutas fernando de la mora, escorts lambare, putas lambare, escorts san lorenzo, putas san lorenzo, prostitutas san lorenzo, trans san lorenzo, escorts capiatá, putas capiatá, prostitutas capiatá, escorts ñemby, putas ñemby, escorts mariano roque alonso, putas mariano roque alonso, escorts itauguá, escorts villa elisa, escorts limpio, gay ciudad del este, gay encarnacion, gay asuncion, gay salto del guaira, parejas asuncion, parejas cde, parejas encarnacion, trios paraguay, swingers paraguay, anuncios adultos paraguay, anuncios eroticos paraguay, contactos adultos, avisos adultos paraguay, scorts py, escort independientes, acompañantes vip, masajes eroticos paraguay, masajes tantricos paraguay, masajistas paraguay, masajistas eroticas, scort, skokka paraguay, hot paraguay, lokanto paraguay, clasificados adultos, sexo paraguay, servicios sexuales, trabajadoras sexuales paraguay",
   
   authors: [{ name: "EscortShop Paraguay" }],
   creator: "EscortShop Paraguay",
   publisher: "EscortShop Paraguay",
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
+  
   metadataBase: new URL("https://escortshoppy.com"),
   alternates: {
     canonical: "/",
   },
+  
   openGraph: {
-    title: "EscortShop Paraguay - La Mayor Plataforma de Escorts",
-    description: "Encuentra anuncios de escorts en todos los departamentos de Paraguay. Publica gratis y encuentra compañía.",
+    title: "EscortShop Paraguay - Escorts y Acompañantes en Todos los Departamentos",
+    description: "Encuentra escorts en los 17 departamentos de Paraguay. Anuncios verificados de mujeres, trans, gay y parejas. La plataforma más completa del país.",
     url: "https://escortshoppy.com",
     siteName: "EscortShop Paraguay",
     locale: "es_PY",
@@ -113,22 +35,24 @@ export const metadata = {
     images: [
       {
         url: "/logo_escorts.jpg",
-        width: 800,
-        height: 600,
-        alt: "EscortShop Paraguay - Plataforma de anuncios para adultos",
+        width: 1200,
+        height: 630,
+        alt: "EscortShop Paraguay - Escorts y Acompañantes",
       },
     ],
   },
+  
   twitter: {
     card: "summary_large_image",
-    title: "EscortShop Paraguay - Encuentra Escorts en Todo el País",
-    description: "La plataforma de anuncios para adultos más completa de Paraguay",
+    title: "EscortShop Paraguay - Escorts en Todo el País",
+    description: "Encuentra escorts y acompañantes en los 17 departamentos de Paraguay",
     images: ["/logo_escorts.jpg"],
-    creator: "@escortshoppy",
   },
+  
   robots: {
     index: true,
     follow: true,
+    nocache: false,
     googleBot: {
       index: true,
       follow: true,
@@ -137,17 +61,38 @@ export const metadata = {
       "max-snippet": -1,
     },
   },
+  
   verification: {
     google: "KK8suhuGYZHA4x4hIS-PYiq-qgX1NZF1qDP3",
   },
-  category: "Adult Services",
+  
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/logo_escorts.jpg", type: "image/jpeg" },
+    ],
+    apple: "/logo_escorts.jpg",
+  },
+  
+  other: {
+    'rating': 'adult',
+    'content-type': 'adult',
+    'audience': 'adults only',
+  }
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="es">
+    <html lang="es-PY">
       <head>
-        {/* Structured Data (JSON-LD) */}
+        {/* Meta tags adicionales */}
+        <meta name="rating" content="adult" />
+        <meta name="language" content="es-PY" />
+        <meta name="geo.region" content="PY" />
+        <meta name="geo.placename" content="Paraguay" />
+        <meta name="audience" content="adults only" />
+        
+        {/* Structured Data Mejorado (JSON-LD) */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -155,13 +100,20 @@ export default function RootLayout({ children }) {
               "@context": "https://schema.org",
               "@type": "WebSite",
               "name": "EscortShop Paraguay",
-              "alternateName": ["EscortShoppy", "EscortShop PY"],
+              "alternateName": ["EscortShoppy", "Escort Shop PY"],
               "url": "https://escortshoppy.com",
-              "description": "Plataforma de anuncios de escorts y acompañantes en todas las ciudades de Paraguay",
-              "keywords": "escorts Paraguay, acompañantes, putas, trans, gay, anuncios adultos",
+              "description": "Plataforma líder de anuncios clasificados de escorts y acompañantes en Paraguay. Cobertura en los 17 departamentos del país.",
+              "inLanguage": "es-PY",
+              "areaServed": {
+                "@type": "Country",
+                "name": "Paraguay"
+              },
               "potentialAction": {
                 "@type": "SearchAction",
-                "target": "https://escortshoppy.com/buscar?q={search_term_string}",
+                "target": {
+                  "@type": "EntryPoint",
+                  "urlTemplate": "https://escortshoppy.com/buscar?q={search_term_string}"
+                },
                 "query-input": "required name=search_term_string"
               },
               "publisher": {
@@ -172,58 +124,91 @@ export default function RootLayout({ children }) {
                   "@type": "ImageObject",
                   "url": "https://escortshoppy.com/logo_escorts.jpg"
                 }
-              },
-              "areaServed": {
-                "@type": "Country",
-                "name": "Paraguay"
-              },
-              "serviceArea": [
-                "Asuncion", "Lambare", "Fernando de la Mora", "Luque", "San Lorenzo", 
-                "Mariano Roque Alonso", "Capita", "Ita", "Ypane",
-                "Ciudad del Este", "Hernandarias", "Presidente Franco", "Minga Guazu",
-                "Encarnacion", "Cambyreta", "Fram", "Natalio",
-                "Caacupe", "Aregua", "Piribebuy", "San Bernardino",
-                "Concepcion", "Belen", "Loreto", "Horqueta",
-                "San Pedro", "San Estanislao", "Villa del Rosario",
-                "Villarrica", "Salto del Guaira", "Independencia",
-                "Coronel Oviedo", "Pedro Juan Caballero", "Pilar",
-                "Villa Hayes", "Fuerte Olimpo", "Filadelfia"
-              ],
-              "mainEntity": {
-                "@type": "ItemList",
-                "itemListElement": [
-                  {
-                    "@type": "ListItem",
-                    "position": 1,
-                    "name": "Escorts en Asunción - Capital de Paraguay"
-                  },
-                  {
-                    "@type": "ListItem",
-                    "position": 2,
-                    "name": "Escorts en Ciudad del Este - Alto Paraná"
-                  },
-                  {
-                    "@type": "ListItem",
-                    "position": 3,
-                    "name": "Escorts en Encarnación - Itapúa"
-                  },
-                  {
-                    "@type": "ListItem",
-                    "position": 4,
-                    "name": "Escorts en Caacupé - Cordillera"
-                  }
-                ]
               }
             })
           }}
         />
 
-        {/* Favicon */}
-        <link rel="icon" href="/logo_escorts.jpg" type="image/jpeg" />
-        <link rel="apple-touch-icon" href="/logo_escorts.jpg" />
+        {/* Structured Data - Organization */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "name": "EscortShop Paraguay",
+              "url": "https://escortshoppy.com",
+              "logo": "https://escortshoppy.com/logo_escorts.jpg",
+              "description": "Plataforma de anuncios clasificados para escorts y acompañantes en Paraguay",
+              "areaServed": [
+                "Asunción", "Central", "Alto Paraná", "Itapúa", "Caaguazú", 
+                "San Pedro", "Cordillera", "Concepción", "Guairá", "Paraguarí",
+                "Misiones", "Ñeembucú", "Amambay", "Canindeyú", "Presidente Hayes",
+                "Alto Paraguay", "Boquerón", "Ciudad del Este", "Encarnación",
+                "Salto del Guairá", "Katueté", "Corpus Christi", "Ypehú", "Itanará",
+                "Luque", "Fernando de la Mora", "Lambaré", "San Lorenzo", "Capiatá",
+                "Ñemby", "Mariano Roque Alonso", "Itauguá", "Villa Elisa", "Limpio",
+                "Pedro Juan Caballero", "Villarrica", "Coronel Oviedo"
+              ],
+              "serviceType": [
+                "Anuncios Clasificados",
+                "Directorio de Escorts",
+                "Servicios para Adultos",
+                "Anuncios Eróticos"
+              ]
+            })
+          }}
+        />
+
+        {/* Structured Data - BreadcrumbList */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": "Inicio",
+                  "item": "https://escortshoppy.com"
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 2,
+                  "name": "Escorts",
+                  "item": "https://escortshoppy.com/escorts"
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 3,
+                  "name": "Trans",
+                  "item": "https://escortshoppy.com/trans"
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 4,
+                  "name": "Gay",
+                  "item": "https://escortshoppy.com/gay"
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 5,
+                  "name": "Parejas",
+                  "item": "https://escortshoppy.com/parejas"
+                }
+              ]
+            })
+          }}
+        />
+
         <meta name="theme-color" content="#ec4899" />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body 
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning
+      >
         {children}
       </body>
     </html>
