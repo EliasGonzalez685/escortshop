@@ -4,97 +4,131 @@ export default async function sitemap() {
   const currentDate = new Date().toISOString();
   
   const departamentos = [
-    'alto-paraguay',
-    'alto-parana',
-    'amambay', 
-    'boqueron',
-    'caaguazu',
-    'caazapa',
-    'canindeyu',
-    'central',
-    'concepcion',
-    'cordillera',
-    'guaira',
-    'itapua',
-    'misiones',
-    'neembucu',
-    'paraguari',
-    'presidente-hayes',
-    'san-pedro'
+    'Alto Paraguay',
+    'Alto Paraná', 
+    'Amambay',
+    'Boquerón',
+    'Caaguazú',
+    'Caazapá',
+    'Canindeyú',
+    'Central',
+    'Concepción',
+    'Cordillera',
+    'Guairá',
+    'Itapúa',
+    'Misiones',
+    'Ñeembucú',
+    'Paraguarí',
+    'Presidente Hayes',
+    'San Pedro'
   ];
+
+  // Ciudades PRINCIPALES para SEO (las más buscadas)
+  const ciudadesPrincipales = {
+    'Central': ['Asunción', 'Luque', 'Fernando de la Mora', 'San Lorenzo', 'Lambaré', 'Capiatá'],
+    'Alto Paraná': ['Ciudad del Este', 'Hernandarias', 'Presidente Franco'],
+    'Itapúa': ['Encarnación', 'Cambyretá', 'Fram'],
+    'Caaguazú': ['Coronel Oviedo'],
+    'Amambay': ['Pedro Juan Caballero'],
+    'Canindeyú': ['Salto del Guairá', 'Katueté'],
+    'Guairá': ['Villarrica'],
+    'Concepción': ['Concepción'],
+    'San Pedro': ['San Pedro'],
+  };
   
   const categorias = ['escorts', 'trans', 'gay', 'parejas'];
   
   const paginasEstaticas = [
-    'login',
-    'registro',
-    'mis-anuncios',
-    'nuevo-anuncio',
-    'terminos',
-    'contacto',
-    'admin'
+    { url: 'login', priority: 0.3 },
+    { url: 'registro', priority: 0.4 },
+    { url: 'terminos', priority: 0.3 },
+    { url: 'contacto', priority: 0.5 },
+    { url: 'mis-anuncios', priority: 0.4 },
   ];
-
-  // Función para ESCAPAR XML correctamente
-  const escapeXml = (text) => {
-    if (!text) return '';
-    return text
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&apos;');
-  };
 
   const urls = [];
 
-  // Página principal
+  // ===== PÁGINA PRINCIPAL (máxima prioridad) =====
   urls.push({
-    url: escapeXml(baseUrl),
+    url: baseUrl,
     lastModified: currentDate,
     changeFrequency: 'daily',
     priority: 1.0,
   });
 
-  // Categorías principales
+  // ===== CATEGORÍAS PRINCIPALES (muy importante) =====
   categorias.forEach(categoria => {
     urls.push({
-      url: escapeXml(`${baseUrl}/${categoria}`),
+      url: `${baseUrl}/${categoria}`,
       lastModified: currentDate,
-      changeFrequency: 'daily',
+      changeFrequency: 'hourly', // Cambiado a hourly porque se actualizan constantemente
       priority: 0.9,
     });
   });
 
-  // Páginas estáticas
-  paginasEstaticas.forEach(pagina => {
+  // ===== PÁGINAS ESTÁTICAS =====
+  paginasEstaticas.forEach(({ url, priority }) => {
     urls.push({
-      url: escapeXml(`${baseUrl}/${pagina}`),
+      url: `${baseUrl}/${url}`,
       lastModified: currentDate,
       changeFrequency: 'monthly',
-      priority: 0.5,
+      priority: priority,
     });
   });
 
-  // Página de departamentos
-  urls.push({
-    url: escapeXml(`${baseUrl}/departamentos`),
-    lastModified: currentDate,
-    changeFrequency: 'weekly',
-    priority: 0.8,
-  });
-
-  // URLs por departamento
+  // ===== URLs POR DEPARTAMENTO (importante para SEO local) =====
   categorias.forEach(categoria => {
     departamentos.forEach(departamento => {
       urls.push({
-        url: escapeXml(`${baseUrl}/${categoria}?departamento=${departamento}`),
+        url: `${baseUrl}/${categoria}/${encodeURIComponent(departamento.toLowerCase().replace(/\s+/g, '-'))}`,
         lastModified: currentDate,
         changeFrequency: 'daily',
-        priority: 0.7,
+        priority: 0.8, // Alta prioridad para departamentos
       });
     });
   });
+
+  // ===== URLs POR CIUDAD PRINCIPAL (SÚPER IMPORTANTE PARA SEO) =====
+  categorias.forEach(categoria => {
+    Object.entries(ciudadesPrincipales).forEach(([departamento, ciudades]) => {
+      ciudades.forEach(ciudad => {
+        const deptoSlug = departamento.toLowerCase().replace(/\s+/g, '-');
+        const ciudadSlug = ciudad.toLowerCase().replace(/\s+/g, '-');
+        
+        urls.push({
+          url: `${baseUrl}/${categoria}/${deptoSlug}/${ciudadSlug}`,
+          lastModified: currentDate,
+          changeFrequency: 'daily',
+          priority: 0.85, // MUY alta prioridad porque son búsquedas específicas
+        });
+      });
+    });
+  });
+
+  // ===== ANUNCIOS INDIVIDUALES (si tienes rutas /anuncio/[id]) =====
+  // Si necesitas agregar anuncios específicos, descomenta esto:
+  /*
+  try {
+    const { data: anuncios } = await supabase
+      .from('anuncios')
+      .select('id, updated_at')
+      .eq('estado', 'activo')
+      .limit(1000);
+    
+    if (anuncios) {
+      anuncios.forEach(anuncio => {
+        urls.push({
+          url: `${baseUrl}/anuncio/${anuncio.id}`,
+          lastModified: anuncio.updated_at || currentDate,
+          changeFrequency: 'weekly',
+          priority: 0.7,
+        });
+      });
+    }
+  } catch (error) {
+    console.error('Error cargando anuncios para sitemap:', error);
+  }
+  */
 
   return urls;
 }
